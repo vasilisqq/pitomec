@@ -9,7 +9,6 @@ router = Router()
 async def set_pit_name(message: Message, state: FSMContext):
     pit = Pitomec.all_accesses[str(message.from_user.id)]
     pit.name = message.text
-    # pit.name = message.text
     await message.answer("ты создал питомца")
     await pit.add_owner(message.from_user.id)
     state.clear
