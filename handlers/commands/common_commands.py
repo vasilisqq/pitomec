@@ -11,14 +11,11 @@ from text import create_ref
 router = Router()
 
 @router.message(Command("start"))
-async def start_bot(message: Message, state: FSMContext, pit):
-    try: 
-        Pitomec.all_accesses[str(message.from_user.id)]
-        await message.answer("у тебя уже есть питомец")
-    except:
+async def start_bot(message: Message, state: FSMContext, pet):
+    if not pet:
         args = message.text.split(maxsplit=2)
         if len(args)==1: 
-            Pitomec(datetime.now, message.from_user.id)
+            Pitomec(message.from_user.id)
             await message.answer_photo(
                 photo=FSInputFile("photos/logo.png"),
                 caption="Привет, это игра для выращивания питомца со своей второй полвинкой\n перешли следующее сообщение, чтобы создать своего питомца",
@@ -28,12 +25,13 @@ async def start_bot(message: Message, state: FSMContext, pit):
         if len(args) == 2:
             if args[1] == str(message.from_user.id):
                 await message.answer("нельзя создать питомца с самим собой")
-                return
-            print(Pitomec.all_accesses)
-            Pitomec.all_accesses.update(
-                {str(message.from_user.id):Pitomec.all_accesses[args[1]]})
-            await state.set_state(Pitomec.name)
-            await message.answer("Введите имя питомца")
-        # pit = Pitomec(datetime.now())
-
+            else:
+                Pitomec.all_accesses.update(
+                    {str(message.from_user.id):Pitomec.all_accesses[args[1]]})
+                await state.set_state(Pitomec.name)
+                await message.answer("Введите имя питомца")
+    else:
+        await message.answer_photo(
+            caption="Вот твой питомец",
+            photo=FSInputFile(f"pets/{pet.id}/photo.jpg"))
 

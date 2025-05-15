@@ -16,40 +16,24 @@ class Pitomec(StatesGroup):
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
 
-    def __init__(self, born_time:datetime, user_id:int|str) -> None:
-        try:
-            with open(f"pets/{self.id}/backup.pkl", "wb") as file:
-                pickle.dump(self, file)
-                file.close()
-            self.time_born = born_time
-            self.owner1 = user_id
-            self.id = hashlib.sha256(
-                str(user_id).encode()
-            ).hexdigest()
-            Pitomec.all_accesses.update({str(user_id):self})
-            self.owner2 = None
-            self.photo = ""
-            self.hour_timer_first = None
-            self.hour_timer_second = None
-            self.egg = None
-        except:
-            with open(f"pets/{self.id}/backup.pkl", "rb") as file:
-                self = pickle.load(file)
-                file.close()
-            Pitomec.all_accesses.update({str(user_id):self, })
-        
-
+    def __init__(self, user_id:int|str) -> None:
+        self.birthday = None
+        self.owner1 = user_id
+        self.id = hashlib.sha256(
+            str(user_id).encode()
+        ).hexdigest()
+        Pitomec.all_accesses.update({str(user_id):self})
+        self.owner2 = None
+        self.photo = ""
+        self.egg = None
+        self.time_to_born = None 
 
     async def add_owner(self, user_id) -> None:
-        Pitomec.scheduler.start()
         self.owner2 = user_id
-        self.hour_timer_first = random.randint(5,10)
-        self.hour_timer_second = random.randint(1,3)
-        await self.create_task()
-    
-    async def init_photo(self, photo_name:str) -> None:
-        image = Image.open(f"photos/eggs/{photo_name}")
+        image = Image.open(f"photos/eggs/whole.png")
         image.save(f"pets/{self.id}/image.png")
+        self.birthday = datetime.now()
+        self.time_to_born = self.birthday + timedelta(days=1)
 
     async def create_task(self):
         Pitomec.scheduler.add_job(

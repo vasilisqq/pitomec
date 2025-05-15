@@ -21,7 +21,7 @@ class UserMiddleware(BaseMiddleware):
             return 
         try:
             pitomec = Pitomec.all_accesses[current_event.from_user.id]
-            data["pit"] = pitomec
+            data["pet"] = pitomec
         except:
-            data["pit"] = None
+            data["pet"] = None
         return await handler(event, data)
