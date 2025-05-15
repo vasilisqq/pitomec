@@ -11,7 +11,7 @@ from text import create_ref
 router = Router()
 
 @router.message(Command("start"))
-async def start_bot(message: Message, state: FSMContext):
+async def start_bot(message: Message, state: FSMContext, pit):
     try: 
         Pitomec.all_accesses[str(message.from_user.id)]
         await message.answer("у тебя уже есть питомец")

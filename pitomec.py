@@ -7,14 +7,12 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aiogram import Bot
 from datetime import datetime, timedelta
 import os
-from pathlib import Path
 import pickle
 
 class Pitomec(StatesGroup):
 
     all_accesses = {}
     name = State()
-    bot: Bot = None
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
 
@@ -69,4 +67,6 @@ class Pitomec(StatesGroup):
         )
         self.hour_timer_first = random.randint(5,10)
         await self.create_task()
+
+
 
