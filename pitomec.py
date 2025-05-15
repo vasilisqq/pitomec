@@ -4,7 +4,6 @@ import hashlib
 from PIL import Image
 import random
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from aiogram import Bot
 from datetime import datetime, timedelta
 import os
 import pickle
@@ -30,10 +29,11 @@ class Pitomec(StatesGroup):
 
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
+        os.makedirs(f"pets/{self.id}")
         image = Image.open(f"photos/eggs/whole.png")
         image.save(f"pets/{self.id}/image.png")
         self.birthday = datetime.now()
-        self.time_to_born = self.birthday + timedelta(days=1)
+        self.time_to_born = self.birthday + timedelta(seconds=10)
 
     async def create_task(self):
         Pitomec.scheduler.add_job(

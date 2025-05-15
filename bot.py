@@ -15,7 +15,8 @@ async def main() -> None:
         main_router_handler
     )
     await bot.delete_webhook(True)
-    await dp.start_polling(bot)
+    print("succes_start")
+    await dp.start_polling(bot, close_bot_session=True)
 
 
 if __name__ == "__main__":
