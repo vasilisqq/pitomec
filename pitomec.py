@@ -15,7 +15,7 @@ class Pitomec(StatesGroup):
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
 
-    def __init__(self, user_id:int|str) -> None:
+    def __init__(self, user_id:int|str, last_message) -> None:
         self.birthday = None
         self.owner1 = user_id
         self.id = hashlib.sha256(
@@ -25,7 +25,11 @@ class Pitomec(StatesGroup):
         self.owner2 = None
         self.photo = ""
         self.egg = None
-        self.time_to_born = None 
+        self.time_to_born = None
+        self.last_message_ids = [
+            last_message,
+            last_message-1,
+            last_message-2]
 
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id

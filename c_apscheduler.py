@@ -11,7 +11,7 @@ class C_scheduler():
     def start_sc(self):
         self.scheduler.start()
 
-    async def scheduled_task(func):
+    def scheduled_task(func):
         def wrapper(self, pit):
             self.scheduler.add_job(
                 func,
@@ -24,6 +24,14 @@ class C_scheduler():
 
     @scheduled_task
     async def hatch(self, pet: Pitomec):
-        print("hello")
+        await bot.send_message(
+            chat_id=pet.owner1,
+            text="питомец вылупился"
+        )
+        await bot.send_message(
+            chat_id=pet.owner2,
+            text="питомец вылупился"
+        )
+        del pet.time_to_born
 
 c_scheduler = C_scheduler()

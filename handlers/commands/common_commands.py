@@ -15,13 +15,14 @@ async def start_bot(message: Message, state: FSMContext, pet):
     if not pet:
         args = message.text.split(maxsplit=2)
         if len(args)==1: 
-            Pitomec(message.from_user.id)
             await message.answer_photo(
                 photo=FSInputFile("photos/logo.png"),
                 caption="Привет, это игра для выращивания питомца со своей второй полвинкой\n перешли следующее сообщение, чтобы создать своего питомца",
             )
-            await message.answer(await create_ref(message.from_user.id),
+            l_m = await message.answer(await create_ref(message.from_user.id),
                             parse_mode="HTML")
+            
+            Pitomec(message.from_user.id, l_m.message_id)
         if len(args) == 2:
             if args[1] == str(message.from_user.id):
                 await message.answer("нельзя создать питомца с самим собой")

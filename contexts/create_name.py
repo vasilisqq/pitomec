@@ -3,6 +3,7 @@ from pitomec import Pitomec
 from aiogram.types import Message, FSInputFile
 from aiogram.fsm.context import FSMContext
 from c_apscheduler import c_scheduler
+from aiogram import Bot
 
 router = Router()
 
@@ -10,17 +11,28 @@ router = Router()
 async def set_pit_name(message: Message, state: FSMContext):
     pet = Pitomec.all_accesses[str(message.from_user.id)]
     pet.name = message.text
-    await message.answer("ты создал питомца")
+    await message.bot.delete_messages(
+        chat_id=message.from_user.id,
+        message_ids=[
+            message.message_id,
+            message.message_id-1,
+            message.message_id-2
+        ]
+    )
     await pet.add_owner(message.from_user.id)
-    state.clear
+    await state.clear()
+    await message.bot.delete_messages(
+        chat_id=pet.owner1,
+        message_ids=pet.last_message_ids
+    )
     await message.answer_photo(
         photo=FSInputFile(f"pets/{pet.id}/image.png"),
-        caption=pet.name
+        caption=f"теперь нужно подождать, когда {pet.name} вылупится"
     )
     await message.bot.send_photo(
         chat_id=pet.owner1,
         photo=FSInputFile(f"pets/{pet.id}/image.png"),
-        caption=pet.name
+        caption=f"теперь нужно подождать, когда {pet.name} вылупится"
     )
-    c_scheduler.start_sc()
     c_scheduler.hatch(pet)
+

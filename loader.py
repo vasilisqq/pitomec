@@ -14,4 +14,5 @@ def import_all_exists_peets():
             Pitomec.all_accesses.update(
                 {pet.owner1:pet,
                 pet.owner2:pet})
+            
             f.close()
