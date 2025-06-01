@@ -34,5 +34,5 @@ async def set_pit_name(message: Message, state: FSMContext):
         photo=FSInputFile(f"pets/{pet.id}/image.png"),
         caption=f"теперь нужно подождать, когда {pet.name} вылупится"
     )
-    c_scheduler.hatch(pet)
+    c_scheduler.crack(pet, "time_to_crack")
 

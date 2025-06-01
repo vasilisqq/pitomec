@@ -23,38 +23,27 @@ class Pitomec(StatesGroup):
         ).hexdigest()
         Pitomec.all_accesses.update({str(user_id):self})
         self.owner2 = None
-        self.photo = ""
         self.egg = None
-        self.time_to_born = None
+        self.time_to_crack = None
         self.last_message_ids = [
             last_message,
             last_message-1,
             last_message-2]
+        os.makedirs(f"pets/{self.id}")
+
+    
 
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
-        os.makedirs(f"pets/{self.id}")
         image = Image.open(f"photos/eggs/whole.png")
         image.save(f"pets/{self.id}/image.png")
         self.birthday = datetime.now()
-        self.time_to_born = self.birthday + timedelta(seconds=10)
-
-    async def create_task(self):
-        Pitomec.scheduler.add_job(
-            self.send_message,
-            trigger='date',
-            run_date=datetime.now()+timedelta(seconds=10),
-            kwargs={"text":str(self.hour_timer_first)}
-        )
+        self.time_to_crack = self.birthday + timedelta(seconds=5)
+        await self.create_back_up()
 
 
-    async def send_message(self, text:str):
-        await Pitomec.bot.send_message(
-            self.owner1,
-            text=text
-        )
-        self.hour_timer_first = random.randint(5,10)
-        await self.create_task()
-
-
+    async def create_back_up(self):
+        with open(f"pets/{self.id}/backup.pkl", "wb") as f:
+            pickle.dump(self, f)
+            f.close()
 

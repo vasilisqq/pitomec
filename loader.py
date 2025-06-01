@@ -11,6 +11,7 @@ def import_all_exists_peets():
     for item in Path("pets").rglob("*.pkl"):
         with open(item, "rb") as f:
             pet = pickle.load(f)
+            print (pet.owner1)
             Pitomec.all_accesses.update(
                 {pet.owner1:pet,
                 pet.owner2:pet})
