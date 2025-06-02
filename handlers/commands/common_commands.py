@@ -34,5 +34,5 @@ async def start_bot(message: Message, state: FSMContext, pet):
     else:
         await message.answer_photo(
             caption="Вот твой питомец",
-            photo=FSInputFile(f"pets/{pet.id}/image.png"))
+            photo=FSInputFile(f"photos/{await pet.get_image()}.png"))
 

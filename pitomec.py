@@ -2,7 +2,6 @@ from aiogram.fsm.state import State, StatesGroup
 from datetime import datetime
 import hashlib
 from PIL import Image
-import random
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime, timedelta
 import os
@@ -12,8 +11,6 @@ class Pitomec(StatesGroup):
 
     all_accesses = {}
     name = State()
-    scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
-
 
     def __init__(self, user_id:int|str, last_message) -> None:
         self.birthday = None
@@ -23,27 +20,28 @@ class Pitomec(StatesGroup):
         ).hexdigest()
         Pitomec.all_accesses.update({str(user_id):self})
         self.owner2 = None
-        self.egg = None
         self.time_to_crack = None
         self.last_message_ids = [
             last_message,
             last_message-1,
             last_message-2]
-        os.makedirs(f"pets/{self.id}")
-
+        self.essense = "egg"
+        self.mood = "whole"
     
 
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
-        image = Image.open(f"photos/eggs/whole.png")
-        image.save(f"pets/{self.id}/image.png")
         self.birthday = datetime.now()
-        self.time_to_crack = self.birthday + timedelta(seconds=5)
+        self.time_to_crack = self.birthday + timedelta(seconds=20)
+        del self.last_message_ids
         await self.create_back_up()
 
 
     async def create_back_up(self):
-        with open(f"pets/{self.id}/backup.pkl", "wb") as f:
+        with open(f"pets/{self.id}.pkl", "wb") as f:
             pickle.dump(self, f)
             f.close()
+    
+    async def get_image(self):
+        return f"{self.essense}/{self.mood}"
 
