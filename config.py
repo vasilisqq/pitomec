@@ -6,6 +6,7 @@ from pathlib import Path
 class Settings(BaseSettings):
     BOT_TOKEN: SecretStr
     BOT_LINK: SecretStr
+    DB_URL: SecretStr
     model_config = SettingsConfigDict(
         env_file = ".env"
     )

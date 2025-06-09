@@ -2,6 +2,7 @@ from typing import Callable, Any, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import Update
 from pitomec import Pitomec
+from db.DAO import DAO
 
 class UserMiddleware(BaseMiddleware):
     async def __call__(
@@ -19,9 +20,5 @@ class UserMiddleware(BaseMiddleware):
         )
         if not current_event:
             return 
-        try:
-            pitomec = Pitomec.all_accesses[current_event.from_user.id]
-            data["pet"] = pitomec
-        except:
-            data["pet"] = None
+        data["pet"] = await DAO.find_pet(current_event.from_user.id)
         return await handler(event, data)

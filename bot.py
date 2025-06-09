@@ -12,7 +12,7 @@ async def main() -> None:
         main_router_contexts,
         main_router_handler
     )
-    dp.startup.register(import_all_exists_peets)
+    # dp.startup.register(import_all_exists_peets)
     await bot.delete_webhook(True)
     print("succes_start")
     await dp.start_polling(bot, close_bot_session=True)

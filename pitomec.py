@@ -4,7 +4,6 @@ import hashlib
 from PIL import Image
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime, timedelta
-import os
 import pickle
 
 class Pitomec(StatesGroup):

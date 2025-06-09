@@ -12,6 +12,7 @@ router = Router()
 
 @router.message(Command("start"))
 async def start_bot(message: Message, state: FSMContext, pet):
+    print(pet)
     if not pet:
         args = message.text.split(maxsplit=2)
         if len(args)==1: 
