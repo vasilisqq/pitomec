@@ -31,7 +31,7 @@ async def start_bot(message: Message, state: FSMContext, pet):
                 Pitomec.all_accesses.update(
                     {str(message.from_user.id):Pitomec.all_accesses[args[1]]})
                 await state.set_state(Pitomec.name)
-                await message.answer("Введите имя питомца")
+                await message.answer("Введи имя питомца")
     else:
         await message.answer_photo(
             caption="Вот твой питомец",

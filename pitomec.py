@@ -5,6 +5,7 @@ from PIL import Image
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime, timedelta
 import pickle
+from db.DAO import DAO
 
 class Pitomec(StatesGroup):
 
@@ -33,13 +34,12 @@ class Pitomec(StatesGroup):
         self.birthday = datetime.now()
         self.time_to_crack = self.birthday + timedelta(seconds=20)
         del self.last_message_ids
-        await self.create_back_up()
+        await DAO.insert_pet(self)
+        del Pitomec.all_accesses[str(self.owner1)]
+        del Pitomec.all_accesses[str(self.owner2)]
+        del self
 
 
-    async def create_back_up(self):
-        with open(f"pets/{self.id}.pkl", "wb") as f:
-            pickle.dump(self, f)
-            f.close()
     
     async def get_image(self):
         return f"{self.essense}/{self.mood}"

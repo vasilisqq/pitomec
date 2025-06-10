@@ -19,6 +19,20 @@ class DAO:
             return res.scalar_one_or_none()
         
 
+    @classmethod
+    async def insert_pet(cls, pet):
+        async with async_session_maker() as session:
+            query = insert(PetsModel).values(
+                owner1 = pet.owner1,
+                owner2 = pet.owner2,
+                name = pet.name,
+                birthday = pet.birthday,
+                time_to_crack = pet.time_to_crack
+            )
+            await session.execute(query)
+            await session.commit()
+
+
     # @classmethod
     # async def player_win_and_loose(cls, user_id1:int, user_id2: int) -> None:
     #     async with async_session_maker() as session:

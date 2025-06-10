@@ -25,15 +25,15 @@ async def set_pit_name(message: Message, state: FSMContext):
     )
     await pet.add_owner(message.from_user.id)
     await state.clear()
-    image = f"photos/{await pet.get_image()}.png"
-    await message.answer_photo(
-        photo=FSInputFile(image),
-        caption=f"теперь нужно подождать, когда {pet.name} вылупится"
-    )
-    await message.bot.send_photo(
-        chat_id=pet.owner1,
-        photo=FSInputFile(image),
-        caption=f"теперь нужно подождать, когда {pet.name} вылупится"
-    )
-    c_scheduler.crack(pet, "time_to_crack")
+    # image = f"photos/{await pet.get_image()}.png"
+    # await message.answer_photo(
+    #     photo=FSInputFile(image),
+    #     caption=f"теперь нужно подождать, когда {pet.name} вылупится"
+    # )
+    # await message.bot.send_photo(
+    #     chat_id=pet.owner1,
+    #     photo=FSInputFile(image),
+    #     caption=f"теперь нужно подождать, когда {pet.name} вылупится"
+    # )
+    # c_scheduler.crack(pet, "time_to_crack")
 
