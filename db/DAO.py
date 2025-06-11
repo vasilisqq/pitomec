@@ -1,6 +1,6 @@
 from db.database import async_session_maker
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy import update, select, or_, case, func
+from sqlalchemy import update, select, or_, case, func, delete
 from db.petModel import PetsModel
 
 class DAO:
@@ -32,6 +32,12 @@ class DAO:
             await session.execute(query)
             await session.commit()
 
+    @classmethod
+    async def delete(cls):
+        async with async_session_maker() as session:
+            query = delete(PetsModel)
+            await session.execute(query)
+            await session.commit()
 
     # @classmethod
     # async def player_win_and_loose(cls, user_id1:int, user_id2: int) -> None:

@@ -1,9 +1,10 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loader import bot
 from pitomec import Pitomec
-from aiogram.types import FSInputFile
+from aiogram.types import BufferedInputFile
 from PIL import Image
 from datetime import timedelta
+
 
 class C_scheduler():
 
@@ -26,21 +27,22 @@ class C_scheduler():
 
     @scheduled_task
     async def crack(self, pet: Pitomec, att: str):
-        pet.time_to_born = pet.birthday + timedelta(seconds=10)
-        del pet.time_to_crack
-        image = f"photos/{await pet.get_image()}.png"
+        await pet.crack()
+        # pet.time_to_born = pet.birthday + timedelta(seconds=10)
+        # del pet.time_to_crack
+        image = await Pitomec.get_image(pet)
         await bot.send_photo(
             chat_id=pet.owner1,
-            photo=FSInputFile(image),
+            photo=BufferedInputFile(image.read(), "f.JPEG"),
             caption=f"{pet.name} скоро уже вылупится"
         )
+        image.seek(0)
         await bot.send_photo(
             chat_id=pet.owner2,
-            photo=FSInputFile(image),
+            photo=BufferedInputFile(image.read(), "f.JPEG"),
             caption=f"{pet.name} скоро уже вылупится"
         )
-        self.hatch(pet, "time_to_born")
-        await pet.create_back_up()
+
     
 
     @scheduled_task
@@ -48,15 +50,16 @@ class C_scheduler():
         pet.essense = "cat"
         pet.mood = "happy"
         del pet.time_to_born
-        image = f"photos/{await pet.get_image()}.png" 
+        image = await Pitomec.get_image(pet)
         await bot.send_photo(
             chat_id=pet.owner1,
-            photo=FSInputFile(image),
+            photo=BufferedInputFile(image.read(), "f.JPEG"),
             caption=f"{pet.name} вылупился"
         )
+        image.seek(0)
         await bot.send_photo(
             chat_id=pet.owner2,
-            photo=FSInputFile(image),
+            photo=BufferedInputFile(image.read(), "f.JPEG"),
             caption=f"{pet.name} вылупился"
         )
         await pet.create_back_up()

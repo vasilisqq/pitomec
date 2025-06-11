@@ -1,5 +1,5 @@
 from db.database import Base
-from sqlalchemy import Column,  Integer, String, DateTime, BigInteger
+from sqlalchemy import Column,  Integer, String, DateTime, BigInteger, CheckConstraint, PrimaryKeyConstraint
 
 class PetsModel(Base):
     __tablename__ = "pet"
@@ -10,4 +10,3 @@ class PetsModel(Base):
     time_to_crack = Column(DateTime, nullable=False)
     essense = Column(String, nullable=False, default="egg")
     mood = Column(String, nullable=False, default="whole")
-    

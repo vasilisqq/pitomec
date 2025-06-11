@@ -14,10 +14,10 @@ from c_apscheduler import C_scheduler
 
 c_scheduler = C_scheduler()
 async def import_all_exists_peets(dispatcher):
-    await process_pkl_files()
+    # await process_pkl_files()
     c_scheduler.start_sc()
-    for instance in pending_tasks:
-        await send_actual_message(instance)
+    # for instance in pending_tasks:
+        # await send_actual_message(instance)
 
 
 def check_current_state(pet):

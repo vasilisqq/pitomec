@@ -1,14 +1,15 @@
 from aiogram import Router
 from pitomec import Pitomec
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message, BufferedInputFile
 from aiogram.fsm.context import FSMContext
 from loader import c_scheduler
 from aiogram import Bot
+from pitomec import Pitomec
 
 router = Router()
 
 @router.message(Pitomec.name)
-async def set_pit_name(message: Message, state: FSMContext):
+async def set_pit_name(message: Message, state: FSMContext, pet):
     pet = Pitomec.all_accesses[str(message.from_user.id)]
     pet.name = message.text
     await message.bot.delete_messages(
@@ -25,15 +26,16 @@ async def set_pit_name(message: Message, state: FSMContext):
     )
     await pet.add_owner(message.from_user.id)
     await state.clear()
-    # image = f"photos/{await pet.get_image()}.png"
-    # await message.answer_photo(
-    #     photo=FSInputFile(image),
-    #     caption=f"теперь нужно подождать, когда {pet.name} вылупится"
-    # )
-    # await message.bot.send_photo(
-    #     chat_id=pet.owner1,
-    #     photo=FSInputFile(image),
-    #     caption=f"теперь нужно подождать, когда {pet.name} вылупится"
-    # )
-    # c_scheduler.crack(pet, "time_to_crack")
+    image = await Pitomec.get_image(pet)
+    await message.answer_photo(
+        photo=BufferedInputFile(image.read(), "f.JPEG"),
+        caption=f"теперь нужно подождать, когда {pet.name} вылупится"
+    )
+    image.seek(0)
+    await message.bot.send_photo(
+        chat_id=pet.owner1,
+        photo=BufferedInputFile(image.read(), "f.JPEG"),
+        caption=f"теперь нужно подождать, когда {pet.name} вылупится"
+    )
+    c_scheduler.crack(pet, "time_to_crack")
 

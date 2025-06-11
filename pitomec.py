@@ -6,6 +6,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime, timedelta
 import pickle
 from db.DAO import DAO
+from io import BytesIO
 
 class Pitomec(StatesGroup):
 
@@ -40,7 +41,14 @@ class Pitomec(StatesGroup):
         del self
 
 
-    
-    async def get_image(self):
-        return f"{self.essense}/{self.mood}"
+    @classmethod
+    async def get_image(cls, pet):
+        img_buffer = BytesIO()
+        image = Image.open(f"photos/back.JPEG")
+        im2 = Image.open(f"photos/{pet.essense}/{pet.mood}.png")
+        image.paste(im2, (0,0), mask=im2)
+        image.save(img_buffer, format="JPEG", quality=95)
+        img_buffer.seek(0)
+        return img_buffer
+        
 

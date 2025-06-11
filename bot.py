@@ -5,14 +5,16 @@ from loader import bot, dp, import_all_exists_peets
 from middlewares.find_pit import UserMiddleware
 from loader import c_scheduler
 from pitomec import Pitomec
+from db.DAO import DAO
 
 async def main() -> None:
+    await DAO.delete()
     dp.update.middleware(UserMiddleware())
     dp.include_routers(
         main_router_contexts,
         main_router_handler
     )
-    # dp.startup.register(import_all_exists_peets)
+    dp.startup.register(import_all_exists_peets)
     await bot.delete_webhook(True)
     print("succes_start")
     await dp.start_polling(bot, close_bot_session=True)

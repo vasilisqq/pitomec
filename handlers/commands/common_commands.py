@@ -1,6 +1,6 @@
 from aiogram import Router,F
 from aiogram.filters import Command
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message, InputFile, BufferedInputFile
 from config import settings
 from aiogram.fsm.context import FSMContext
 from pitomec import Pitomec
@@ -12,7 +12,6 @@ router = Router()
 
 @router.message(Command("start"))
 async def start_bot(message: Message, state: FSMContext, pet):
-    print(pet)
     if not pet:
         args = message.text.split(maxsplit=2)
         if len(args)==1: 
@@ -33,7 +32,9 @@ async def start_bot(message: Message, state: FSMContext, pet):
                 await state.set_state(Pitomec.name)
                 await message.answer("Введи имя питомца")
     else:
+        photo = await Pitomec.get_image(pet)
         await message.answer_photo(
             caption="Вот твой питомец",
-            photo=FSInputFile(f"photos/{await pet.get_image()}.png"))
+            photo= BufferedInputFile(photo.read(), "f.JPEG")
+            )
 
