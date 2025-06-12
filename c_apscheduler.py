@@ -27,9 +27,7 @@ class C_scheduler():
 
     @scheduled_task
     async def crack(self, pet: Pitomec, att: str):
-        await pet.crack()
-        # pet.time_to_born = pet.birthday + timedelta(seconds=10)
-        # del pet.time_to_crack
+        await Pitomec.crack(pet)
         image = await Pitomec.get_image(pet)
         await bot.send_photo(
             chat_id=pet.owner1,
@@ -42,14 +40,12 @@ class C_scheduler():
             photo=BufferedInputFile(image.read(), "f.JPEG"),
             caption=f"{pet.name} скоро уже вылупится"
         )
-
+        self.hatch(pet, "time_to_crack")
     
 
     @scheduled_task
     async def hatch(self, pet: Pitomec, att: str):
-        pet.essense = "cat"
-        pet.mood = "happy"
-        del pet.time_to_born
+        await Pitomec.hatch(pet)
         image = await Pitomec.get_image(pet)
         await bot.send_photo(
             chat_id=pet.owner1,
@@ -62,5 +58,4 @@ class C_scheduler():
             photo=BufferedInputFile(image.read(), "f.JPEG"),
             caption=f"{pet.name} вылупился"
         )
-        await pet.create_back_up()
 

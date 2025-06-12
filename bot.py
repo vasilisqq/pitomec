@@ -8,7 +8,7 @@ from pitomec import Pitomec
 from db.DAO import DAO
 
 async def main() -> None:
-    await DAO.delete()
+    # await DAO.delete()
     dp.update.middleware(UserMiddleware())
     dp.include_routers(
         main_router_contexts,

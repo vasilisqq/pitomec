@@ -39,6 +39,38 @@ class DAO:
             await session.execute(query)
             await session.commit()
 
+    @classmethod
+    async def crack(cls, pet):
+        async with async_session_maker() as session:
+            query = update(PetsModel).where(
+                PetsModel.owner1==pet.owner1
+            ).values(
+                mood=pet.mood,
+                time_to_crack=pet.time_to_crack
+            )
+            await session.execute(query)
+            await session.commit()
+
+    @classmethod
+    async def hatch(cls, pet):
+        async with async_session_maker() as session:
+            query = update(PetsModel).where(
+                PetsModel.owner1==pet.owner1
+            ).values(
+                mood=pet.mood,
+                essense=pet.essense
+            )
+            await session.execute(query)
+            await session.commit()
+
+    @classmethod
+    async def get_all(cls):
+        async with async_session_maker() as session:
+            query = select(PetsModel)
+            res = await session.execute(query)
+            await session.commit()
+            return res.scalars().all()
+        
     # @classmethod
     # async def player_win_and_loose(cls, user_id1:int, user_id2: int) -> None:
     #     async with async_session_maker() as session:

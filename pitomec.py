@@ -16,9 +16,9 @@ class Pitomec(StatesGroup):
     def __init__(self, user_id:int|str, last_message) -> None:
         self.birthday = None
         self.owner1 = user_id
-        self.id = hashlib.sha256(
-            str(user_id).encode()
-        ).hexdigest()
+        # self.id = hashlib.sha256(
+        #     str(user_id).encode()
+        # ).hexdigest()
         Pitomec.all_accesses.update({str(user_id):self})
         self.owner2 = None
         self.time_to_crack = None
@@ -33,7 +33,7 @@ class Pitomec(StatesGroup):
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
         self.birthday = datetime.now()
-        self.time_to_crack = self.birthday + timedelta(seconds=20)
+        self.time_to_crack = self.birthday + timedelta(seconds=5)
         del self.last_message_ids
         await DAO.insert_pet(self)
         del Pitomec.all_accesses[str(self.owner1)]
@@ -51,4 +51,15 @@ class Pitomec(StatesGroup):
         img_buffer.seek(0)
         return img_buffer
         
+    @classmethod
+    async def crack(cls, pet):
+        pet.time_to_crack = pet.birthday + timedelta(seconds=10)
+        pet.mood = "nock"
+        await DAO.crack(pet)
+
+    @classmethod
+    async def hatch(cls, pet):
+        pet.essense = "hipopotam"
+        pet.mood = "happy"
+        await DAO.hatch(pet)
 
