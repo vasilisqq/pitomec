@@ -12,6 +12,7 @@ router = Router()
 
 @router.message(Command("start"))
 async def start_bot(message: Message, state: FSMContext, pet):
+    print(await state.get_data())
     if not pet:
         args = message.text.split(maxsplit=2)
         if len(args)==1: 
@@ -29,6 +30,7 @@ async def start_bot(message: Message, state: FSMContext, pet):
             else:
                 Pitomec.all_accesses.update(
                     {str(message.from_user.id):Pitomec.all_accesses[args[1]]})
+                await Pitomec.save_accesses()
                 await state.set_state(Pitomec.name)
                 await message.answer("Введи имя питомца")
     else:

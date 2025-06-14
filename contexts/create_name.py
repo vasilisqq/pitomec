@@ -10,6 +10,7 @@ router = Router()
 
 @router.message(Pitomec.name)
 async def set_pit_name(message: Message, state: FSMContext, pet):
+    print(await state.get_state())
     pet = Pitomec.all_accesses[str(message.from_user.id)]
     pet.name = message.text
     await message.bot.delete_messages(

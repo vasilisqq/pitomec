@@ -16,9 +16,6 @@ class Pitomec(StatesGroup):
     def __init__(self, user_id:int|str, last_message) -> None:
         self.birthday = None
         self.owner1 = user_id
-        # self.id = hashlib.sha256(
-        #     str(user_id).encode()
-        # ).hexdigest()
         Pitomec.all_accesses.update({str(user_id):self})
         self.owner2 = None
         self.time_to_crack = None
@@ -37,7 +34,7 @@ class Pitomec(StatesGroup):
         del self.last_message_ids
         await DAO.insert_pet(self)
         del Pitomec.all_accesses[str(self.owner1)]
-        del Pitomec.all_accesses[str(self.owner2)]
+        del Pitomec.all_accesses[str(user_id)]
         del self
 
 
@@ -63,3 +60,11 @@ class Pitomec(StatesGroup):
         pet.mood = "happy"
         await DAO.hatch(pet)
 
+    @classmethod
+    async def save_accesses(cls):
+        with open("accesses.pkl", "wb") as f:
+            pickle.dump(
+                Pitomec.all_accesses,
+                f
+            )
+            f.close()

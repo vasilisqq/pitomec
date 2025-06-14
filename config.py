@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     BOT_TOKEN: SecretStr
     BOT_LINK: SecretStr
     DB_URL: SecretStr
+    REDIS_PASSWORD:SecretStr
     model_config = SettingsConfigDict(
         env_file = ".env"
     )

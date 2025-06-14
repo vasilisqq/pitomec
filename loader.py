@@ -6,17 +6,46 @@ from datetime import datetime
 from pitomec import Pitomec
 from aiogram.types import BufferedInputFile
 from db.DAO import DAO
+from aiogram.fsm.storage.redis import RedisStorage
+import redis.asyncio as redis 
 
 pending_tasks = []
-dp = Dispatcher()
+
+storage = RedisStorage(
+    redis=redis.Redis(
+        host='localhost',
+        port=6379,
+        db=0,
+        password=settings.REDIS_PASSWORD.get_secret_value(),
+        decode_responses=True
+    )
+)
+
+dp = Dispatcher(storage=storage)
 bot = Bot(settings.BOT_TOKEN.get_secret_value())
 from c_apscheduler import C_scheduler
 
 c_scheduler = C_scheduler()
 async def import_all_exists_peets(dispatcher):
-    await get_all()
+    # await get_all()
     c_scheduler.start_sc()
+    await load_accesess()
+    # await clear_all_fsm_data(storage)
 
+async def clear_all_fsm_data(storage: RedisStorage):
+    prefix = storage.key_builder.prefix
+    separator = storage.key_builder.separator
+    pattern = f"{prefix}{separator}*"
+    keys = []
+    async for key in storage.redis.scan_iter(match=pattern):
+        keys.append(key)
+    if keys:
+        await storage.redis.delete(*keys)
+
+async def load_accesess():
+    with open("accesses.pkl", "rb") as f:
+        Pitomec.all_accesses = pickle.load(f)
+        f.close()
 
 def check_current_state(pet):
     if pet.mood == "whole":
