@@ -40,7 +40,7 @@ class C_scheduler():
             photo=BufferedInputFile(image.read(), "f.JPEG"),
             caption=f"{pet.name} скоро уже вылупится"
         )
-        self.hatch(pet, "time_to_crack")
+        self.hatch(pet, "time_to_hatch")
     
 
     @scheduled_task
@@ -50,12 +50,12 @@ class C_scheduler():
         await bot.send_photo(
             chat_id=pet.owner1,
             photo=BufferedInputFile(image.read(), "f.JPEG"),
-            caption=f"{pet.name} вылупился"
+            caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
         )
         image.seek(0)
         await bot.send_photo(
             chat_id=pet.owner2,
             photo=BufferedInputFile(image.read(), "f.JPEG"),
-            caption=f"{pet.name} вылупился"
+            caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
         )
 

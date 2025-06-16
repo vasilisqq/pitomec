@@ -34,9 +34,21 @@ async def start_bot(message: Message, state: FSMContext, pet):
                 await state.set_state(Pitomec.name)
                 await message.answer("Введи имя питомца")
     else:
-        photo = await Pitomec.get_image(pet)
-        await message.answer_photo(
-            caption="Вот твой питомец",
-            photo= BufferedInputFile(photo.read(), "f.JPEG")
-            )
+        await message.answer(
+            "Чтобы посмотреть на питомца, пропиши команду /me"
+        )
+        
 
+@router.message(Command("me"))
+async def start_bot(message: Message, state: FSMContext, pet):
+    photo = await Pitomec.get_image(pet)
+    if pet.time_to_hatch > datetime.now():
+        await message.answer_photo(
+        caption= await Pitomec.calculate_time(pet),
+        photo= BufferedInputFile(photo.read(), "f.JPEG")
+        )
+    else:
+        await message.answer_photo(
+        caption="Вот твой питомец",
+        photo= BufferedInputFile(photo.read(), "f.JPEG")
+        )

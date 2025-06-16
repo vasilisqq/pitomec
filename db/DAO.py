@@ -27,7 +27,8 @@ class DAO:
                 owner2 = pet.owner2,
                 name = pet.name,
                 birthday = pet.birthday,
-                time_to_crack = pet.time_to_crack
+                time_to_crack = pet.time_to_crack,
+                time_to_hatch = pet.time_to_hatch
             )
             await session.execute(query)
             await session.commit()
@@ -45,8 +46,7 @@ class DAO:
             query = update(PetsModel).where(
                 PetsModel.owner1==pet.owner1
             ).values(
-                mood=pet.mood,
-                time_to_crack=pet.time_to_crack
+                mood=pet.mood
             )
             await session.execute(query)
             await session.commit()

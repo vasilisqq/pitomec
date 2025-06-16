@@ -7,11 +7,13 @@ from datetime import datetime, timedelta
 import pickle
 from db.DAO import DAO
 from io import BytesIO
+from dateutil.relativedelta import relativedelta
 
 class Pitomec(StatesGroup):
 
     all_accesses = {}
     name = State()
+
 
     def __init__(self, user_id:int|str, last_message) -> None:
         self.birthday = None
@@ -19,6 +21,7 @@ class Pitomec(StatesGroup):
         Pitomec.all_accesses.update({str(user_id):self})
         self.owner2 = None
         self.time_to_crack = None
+        self.time_to_hatch = None
         self.last_message_ids = [
             last_message,
             last_message-1,
@@ -30,7 +33,8 @@ class Pitomec(StatesGroup):
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
         self.birthday = datetime.now()
-        self.time_to_crack = self.birthday + timedelta(seconds=5)
+        self.time_to_crack = self.birthday + timedelta(minutes=5)
+        self.time_to_hatch = self.birthday + timedelta(minutes=10)
         del self.last_message_ids
         await DAO.insert_pet(self)
         del Pitomec.all_accesses[str(self.owner1)]
@@ -50,7 +54,6 @@ class Pitomec(StatesGroup):
         
     @classmethod
     async def crack(cls, pet):
-        pet.time_to_crack = pet.birthday + timedelta(seconds=10)
         pet.mood = "nock"
         await DAO.crack(pet)
 
@@ -68,3 +71,13 @@ class Pitomec(StatesGroup):
                 f
             )
             f.close()
+    
+    @classmethod
+    async def calculate_time(cls, pet):
+        delta = pet.time_to_hatch - datetime.now()
+        total_seconds = abs(round(delta.total_seconds()))
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        if hours > 0:
+            return f"{pet.name} вылупится через: {hours} ч {minutes} мин" 
+        return f"{pet.name} вылупится через: {minutes} мин"

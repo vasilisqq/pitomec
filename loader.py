@@ -27,10 +27,13 @@ from c_apscheduler import C_scheduler
 
 c_scheduler = C_scheduler()
 async def import_all_exists_peets(dispatcher):
-    # await get_all()
     c_scheduler.start_sc()
-    await load_accesess()
-    # await clear_all_fsm_data(storage)
+    await get_all()
+    try:
+        await load_accesess()
+    except:
+        ...
+    await clear_all_fsm_data(storage)
 
 async def clear_all_fsm_data(storage: RedisStorage):
     prefix = storage.key_builder.prefix
@@ -55,31 +58,29 @@ def check_current_state(pet):
 async def get_all():
     """Асинхронная обработка PKL файлов"""
     pets = await DAO.get_all()
-    print(pets)
     for pet in pets:
         if pet.time_to_unhappy:
             ...
-        elif pet.time_to_hatch:
-            ...
-        elif pet.time_to_crack:
-            if pet.time_to_crack <= datetime.now():
+        elif pet.time_to_hatch <= datetime.now():
+                ...
+        elif pet.time_to_crack <= datetime.now():
                 await already_cracked(pet)
-            else:
-                # Планируем отправку через APScheduler
-                c_scheduler.crack(pet, "time_to_crack")
+        else:
+            c_scheduler.crack(pet, "time_to_crack")
        
 
 async def already_cracked(pet):
+    pet.mood = "nock"
     image = await Pitomec.get_image(pet)
     await bot.send_photo(
             chat_id=pet.owner1,
             photo=BufferedInputFile(image.read(), "f.JPEG"),
-            caption=f"{pet.name} скоро уже вылупится"
+            caption=f"ой.....\nкажется {pet.name} начал шевелиться\n{await Pitomec.calculate_time(pet)}"
         )
     image = await Pitomec.get_image(pet)
     await bot.send_photo(
-            chat_id=pet.owner1,
+            chat_id=pet.owner2,
             photo=BufferedInputFile(image.read(), "f.JPEG"),
-            caption=f"{pet.name} скоро уже вылупится"
+            caption=f"ой.....\nкажется {pet.name} начал шевелиться\n{await Pitomec.calculate_time(pet)}"
         )
-    print(f"Отправка сообщения: {pet.id}")
+    c_scheduler.hatch(pet, "time_to_hatch")
