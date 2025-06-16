@@ -2,8 +2,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loader import bot
 from pitomec import Pitomec
 from aiogram.types import BufferedInputFile
-from PIL import Image
-from datetime import timedelta
 
 
 class C_scheduler():

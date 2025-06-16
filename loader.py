@@ -56,13 +56,12 @@ def check_current_state(pet):
 
 
 async def get_all():
-    """Асинхронная обработка PKL файлов"""
     pets = await DAO.get_all()
     for pet in pets:
         if pet.time_to_unhappy:
             ...
         elif pet.time_to_hatch <= datetime.now():
-                ...
+                await already_hatched(pet)
         elif pet.time_to_crack <= datetime.now():
                 await already_cracked(pet)
         else:
@@ -71,6 +70,7 @@ async def get_all():
 
 async def already_cracked(pet):
     pet.mood = "nock"
+    await DAO.upd(pet)
     image = await Pitomec.get_image(pet)
     await bot.send_photo(
             chat_id=pet.owner1,
@@ -84,3 +84,20 @@ async def already_cracked(pet):
             caption=f"ой.....\nкажется {pet.name} начал шевелиться\n{await Pitomec.calculate_time(pet)}"
         )
     c_scheduler.hatch(pet, "time_to_hatch")
+
+async def already_hatched(pet):
+    pet.essense = "hipopotam"
+    pet.mood = "happy"
+    await DAO.upd(pet)
+    image = await Pitomec.get_image(pet)
+    await bot.send_photo(
+            chat_id=pet.owner1,
+            photo=BufferedInputFile(image.read(), "f.JPEG"),
+            caption=f"{pet.name} вылупился"
+        )
+    image = await Pitomec.get_image(pet)
+    await bot.send_photo(
+            chat_id=pet.owner2,
+            photo=BufferedInputFile(image.read(), "f.JPEG"),
+            caption=f"{pet.name} вылупился"
+        )

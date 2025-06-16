@@ -9,8 +9,7 @@ from pitomec import Pitomec
 router = Router()
 
 @router.message(Pitomec.name)
-async def set_pit_name(message: Message, state: FSMContext, pet):
-    print(await state.get_state())
+async def set_pit_name(message: Message, state: FSMContext):
     pet = Pitomec.all_accesses[str(message.from_user.id)]
     pet.name = message.text
     await message.bot.delete_messages(
@@ -25,7 +24,9 @@ async def set_pit_name(message: Message, state: FSMContext, pet):
         chat_id=pet.owner1,
         message_ids=pet.last_message_ids
     )
-    await pet.add_owner(message.from_user.id)
+    pet = await pet.add_owner(message.from_user.id)
+    print(pet)
+    print(pet.name)
     await state.clear()
     image = await Pitomec.get_image(pet)
     await message.answer_photo(

@@ -33,13 +33,14 @@ class Pitomec(StatesGroup):
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
         self.birthday = datetime.now()
-        self.time_to_crack = self.birthday + timedelta(minutes=5)
-        self.time_to_hatch = self.birthday + timedelta(minutes=10)
+        self.time_to_crack = self.birthday + timedelta(seconds=5)
+        self.time_to_hatch = self.birthday + timedelta(seconds=10)
         del self.last_message_ids
-        await DAO.insert_pet(self)
+        pet = await DAO.insert_pet(self)
         del Pitomec.all_accesses[str(self.owner1)]
         del Pitomec.all_accesses[str(user_id)]
         del self
+        return pet
 
 
     @classmethod
@@ -55,13 +56,13 @@ class Pitomec(StatesGroup):
     @classmethod
     async def crack(cls, pet):
         pet.mood = "nock"
-        await DAO.crack(pet)
+        await DAO.upd(pet)
 
     @classmethod
     async def hatch(cls, pet):
         pet.essense = "hipopotam"
         pet.mood = "happy"
-        await DAO.hatch(pet)
+        await DAO.upd(pet)
 
     @classmethod
     async def save_accesses(cls):
