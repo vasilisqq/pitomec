@@ -8,6 +8,7 @@ import pickle
 from db.DAO import DAO
 from io import BytesIO
 from dateutil.relativedelta import relativedelta
+import random
 
 class Pitomec(StatesGroup):
 
@@ -47,7 +48,11 @@ class Pitomec(StatesGroup):
     async def get_image(cls, pet):
         img_buffer = BytesIO()
         image = Image.open(f"photos/back.JPEG")
-        im2 = Image.open(f"photos/{pet.essense}/{pet.mood}.png")
+        moods = pet.mood.split(" ")
+        if len(moods) > 1:
+            im2 = Image.open(f"photos/{pet.essense}/{pet.moods[0]}.png")
+        else:
+            im2 = Image.open(f"photos/{pet.essense}/{pet.mood}.png")
         image.paste(im2, (0,0), mask=im2)
         image.save(img_buffer, format="JPEG", quality=95)
         img_buffer.seek(0)
@@ -82,3 +87,17 @@ class Pitomec(StatesGroup):
         if hours > 0:
             return f"{pet.name} вылупится через: {hours} ч {minutes} мин" 
         return f"{pet.name} вылупится через: {minutes} мин"
+    
+    @classmethod
+    async def unhappy(cls, pet):
+        pet.time_to_unhappy = datetime.now() + timedelta(seconds=random.randint(1,2))
+        
+    @classmethod
+    async def hungry(cls, pet):
+        pet.time_to_hungry = datetime.now() + timedelta(hours=random.randint(5,6))
+
+    @classmethod
+    async def walk(cls, pet):
+        pet.time_to_walk = datetime.now() + timedelta(hours=random.randint(3,5))
+
+        

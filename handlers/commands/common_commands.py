@@ -7,6 +7,7 @@ from pitomec import Pitomec
 from datetime import datetime
 from aiogram.types import FSInputFile
 from text import create_ref
+from loader import c_scheduler
 
 router = Router()
 
@@ -52,3 +53,7 @@ async def start_bot(message: Message, state: FSMContext, pet):
         caption="Вот твой питомец",
         photo= BufferedInputFile(photo.read(), "f.JPEG")
         )
+    
+# @router.message(Command("test"))
+# async def start_bot(message: Message, state: FSMContext, pet):
+#     c_scheduler.hungry(pet, "time_to_hungry")
