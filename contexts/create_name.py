@@ -1,10 +1,10 @@
 from aiogram import Router
-from pitomec import Pitomec
+from pets.pitomec import Pitomec
 from aiogram.types import Message, BufferedInputFile
 from aiogram.fsm.context import FSMContext
 from loader import c_scheduler
 from aiogram import Bot
-from pitomec import Pitomec
+from pets.pitomec import Pitomec
 
 router = Router()
 
@@ -25,8 +25,6 @@ async def set_pit_name(message: Message, state: FSMContext):
         message_ids=pet.last_message_ids
     )
     pet = await pet.add_owner(message.from_user.id)
-    print(pet)
-    print(pet.name)
     await state.clear()
     image = await Pitomec.get_image(pet)
     await message.answer_photo(

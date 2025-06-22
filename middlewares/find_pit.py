@@ -1,7 +1,7 @@
 from typing import Callable, Any, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import Update
-from pitomec import Pitomec
+from pets.pitomec import Pitomec
 from db.DAO import DAO
 
 class UserMiddleware(BaseMiddleware):

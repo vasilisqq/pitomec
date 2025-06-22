@@ -4,11 +4,11 @@ from contexts import main_router_contexts
 from loader import bot, dp, import_all_exists_peets
 from middlewares.find_pit import UserMiddleware
 from loader import c_scheduler
-from pitomec import Pitomec
+from pets.pitomec import Pitomec
 from db.DAO import DAO
 
 async def main() -> None:
-    await DAO.delete()
+    # await DAO.delete()
     dp.update.middleware(UserMiddleware())
     dp.include_routers(
         main_router_contexts,

@@ -9,6 +9,7 @@ from db.DAO import DAO
 from io import BytesIO
 from dateutil.relativedelta import relativedelta
 import random
+from aiogram.types import BufferedInputFile
 
 class Pitomec(StatesGroup):
 
@@ -56,7 +57,7 @@ class Pitomec(StatesGroup):
         image.paste(im2, (0,0), mask=im2)
         image.save(img_buffer, format="JPEG", quality=95)
         img_buffer.seek(0)
-        return img_buffer
+        return BufferedInputFile(img_buffer.read(), "f.JPEG")
         
     @classmethod
     async def crack(cls, pet):
@@ -92,12 +93,13 @@ class Pitomec(StatesGroup):
     async def unhappy(cls, pet):
         pet.time_to_unhappy = datetime.now() + timedelta(seconds=random.randint(1,2))
         
-    @classmethod
-    async def hungry(cls, pet):
-        pet.time_to_hungry = datetime.now() + timedelta(hours=random.randint(5,6))
+    # @classmethod
+    # async def hungry(cls, pet):
+    #     pet.time_to_hungry = datetime.now() + timedelta(hours=random.randint(5,6))
 
-    @classmethod
-    async def walk(cls, pet):
-        pet.time_to_walk = datetime.now() + timedelta(hours=random.randint(3,5))
+
+    # @classmethod
+    # async def walk(cls, pet):
+    #     pet.time_to_walk = datetime.now() + timedelta(hours=random.randint(3,5))
 
         

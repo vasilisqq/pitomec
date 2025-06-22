@@ -1,9 +1,13 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from loader import bot
-from pitomec import Pitomec
+from loader import bot, states_p, dp
+from pets.pitomec import Pitomec
 from aiogram.types import BufferedInputFile
 from db.DAO import DAO
 from datetime import datetime, timedelta
+from keyboards import to_be_happy_btn
+from pets.pitomec_in_game import PetGame
+from aiogram.fsm.context import FSMContext
+import random
 
 class C_scheduler():
 
@@ -30,40 +34,47 @@ class C_scheduler():
         image = await Pitomec.get_image(pet)
         await bot.send_photo(
             chat_id=pet.owner1,
-            photo=BufferedInputFile(image.read(), "f.JPEG"),
+            photo=image,
             caption=f"{pet.name} скоро уже вылупится"
         )
-        image.seek(0)
         await bot.send_photo(
             chat_id=pet.owner2,
-            photo=BufferedInputFile(image.read(), "f.JPEG"),
+            photo=image,
             caption=f"{pet.name} скоро уже вылупится"
         )
         self.hatch(pet, "time_to_hatch")
     
 
     @scheduled_task
-    async def hatch(self, pet: Pitomec, att: str):
+    async def hatch(self, pet: Pitomec, att: str, state: FSMContext):
         await Pitomec.hatch(pet)
         image = await Pitomec.get_image(pet)
-        await bot.send_photo(
+        m1 = await bot.send_photo(
             chat_id=pet.owner1,
-            photo=BufferedInputFile(image.read(), "f.JPEG"),
+            photo=image,
             caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
         )
-        image.seek(0)
-        await bot.send_photo(
+        m2 = await bot.send_photo(
             chat_id=pet.owner2,
-            photo=BufferedInputFile(image.read(), "f.JPEG"),
+            photo=image,
             caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
         )
         await Pitomec.unhappy(pet)
         self.unhappy(pet, "time_to_unhappy")
-        await Pitomec.hungry(pet) 
-        self.hungry(pet, "time_to_hungry")
-        await Pitomec.walk(pet)
-        self.walk(pet, "time_to_walk")
-        await DAO.upd(pet)
+        pg = PetGame(m1, m2, pet)
+        await state.set_state(states_p.game)
+        await state.update_data(
+            id = pet.owner1,
+            message1 = [m1],
+            message2 = [m2],
+            hide = random.randint(1,10)
+        )
+        # await dp.fsm.
+        # await Pitomec.hungry(pet) 
+        # self.hungry(pet, "time_to_hungry")
+        # await Pitomec.walk(pet)
+        # self.walk(pet, "time_to_walk")
+        # await DAO.upd(pet)
 
     @scheduled_task
     async def unhappy(self, pet: Pitomec, att: str):
@@ -75,14 +86,15 @@ class C_scheduler():
         image = await Pitomec.get_image(pet)
         await bot.send_photo(
             chat_id=pet.owner1,
-            photo=BufferedInputFile(image.read(), "f.JPEG"),
-            caption=f"{pet.name} грустит.....\n поиграй с ним"
+            photo=image,
+            caption=f"{pet.name} грустит.....\n поиграй с ним",
+            reply_markup=to_be_happy_btn
         )
-        image.seek(0)
         await bot.send_photo(
             chat_id=pet.owner2,
-            photo=BufferedInputFile(image.read(), "f.JPEG"),
-            caption=f"{pet.name} грустит.....\n поиграй с ним"
+            photo=image,
+            caption=f"{pet.name} грустит.....\n поиграй с ним",
+            reply_markup=to_be_happy_btn
         )
         
     @scheduled_task

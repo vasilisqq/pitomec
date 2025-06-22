@@ -3,11 +3,11 @@ from aiogram.filters import Command
 from aiogram.types import Message, InputFile, BufferedInputFile
 from config import settings
 from aiogram.fsm.context import FSMContext
-from pitomec import Pitomec
+from pets.pitomec import Pitomec
 from datetime import datetime
 from aiogram.types import FSInputFile
 from text import create_ref
-from loader import c_scheduler
+from loader import c_scheduler, states_p
 
 router = Router()
 
@@ -32,7 +32,7 @@ async def start_bot(message: Message, state: FSMContext, pet):
                 Pitomec.all_accesses.update(
                     {str(message.from_user.id):Pitomec.all_accesses[args[1]]})
                 await Pitomec.save_accesses()
-                await state.set_state(Pitomec.name)
+                await state.set_state(states_p.name)
                 await message.answer("Введи имя питомца")
     else:
         await message.answer(
@@ -53,6 +53,8 @@ async def start_bot(message: Message, state: FSMContext, pet):
         caption="Вот твой питомец",
         photo= BufferedInputFile(photo.read(), "f.JPEG")
         )
+        # await Pitomec.unhappy(pet)
+        # c_scheduler.unhappy(pet, "time_to_unhappy")
     
 # @router.message(Command("test"))
 # async def start_bot(message: Message, state: FSMContext, pet):
