@@ -1,2 +1,3 @@
-d = {1:1} | {2:2}
-print(d)
+a = "Alice, Bob"
+if 0:
+    print(":sf")

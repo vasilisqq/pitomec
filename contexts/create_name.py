@@ -2,13 +2,13 @@ from aiogram import Router
 from pets.pitomec import Pitomec
 from aiogram.types import Message, BufferedInputFile
 from aiogram.fsm.context import FSMContext
-from loader import c_scheduler
+from loader import c_scheduler, states_p
 from aiogram import Bot
 from pets.pitomec import Pitomec
 
 router = Router()
 
-@router.message(Pitomec.name)
+@router.message(states_p.name)
 async def set_pit_name(message: Message, state: FSMContext):
     pet = Pitomec.all_accesses[str(message.from_user.id)]
     pet.name = message.text
@@ -28,13 +28,12 @@ async def set_pit_name(message: Message, state: FSMContext):
     await state.clear()
     image = await Pitomec.get_image(pet)
     await message.answer_photo(
-        photo=BufferedInputFile(image.read(), "f.JPEG"),
+        photo=image,
         caption=f"теперь нужно подождать, когда {pet.name} вылупится"
     )
-    image.seek(0)
     await message.bot.send_photo(
         chat_id=pet.owner1,
-        photo=BufferedInputFile(image.read(), "f.JPEG"),
+        photo=image,
         caption=f"теперь нужно подождать, когда {pet.name} вылупится"
     )
     c_scheduler.crack(pet, "time_to_crack")

@@ -29,7 +29,7 @@ class C_scheduler():
     
 
     @scheduled_task
-    async def crack(self, pet: Pitomec, att: str):
+    async def crack(self, pet, att: str):
         await Pitomec.crack(pet)
         image = await Pitomec.get_image(pet)
         await bot.send_photo(
@@ -46,7 +46,11 @@ class C_scheduler():
     
 
     @scheduled_task
-    async def hatch(self, pet: Pitomec, att: str, state: FSMContext):
+    async def hatch(self, 
+                    pet: Pitomec, 
+                    att: str, 
+                    # state: FSMContext
+                    ):
         await Pitomec.hatch(pet)
         image = await Pitomec.get_image(pet)
         m1 = await bot.send_photo(
@@ -62,13 +66,13 @@ class C_scheduler():
         await Pitomec.unhappy(pet)
         self.unhappy(pet, "time_to_unhappy")
         pg = PetGame(m1, m2, pet)
-        await state.set_state(states_p.game)
-        await state.update_data(
-            id = pet.owner1,
-            message1 = [m1],
-            message2 = [m2],
-            hide = random.randint(1,10)
-        )
+        # await state.set_state(states_p.game)
+        # await state.update_data(
+        #     id = pet.owner1,
+        #     message1 = [m1],
+        #     message2 = [m2],
+        #     hide = random.randint(1,10)
+        # )
         # await dp.fsm.
         # await Pitomec.hungry(pet) 
         # self.hungry(pet, "time_to_hungry")
@@ -78,11 +82,7 @@ class C_scheduler():
 
     @scheduled_task
     async def unhappy(self, pet: Pitomec, att: str):
-        if pet.mood == "happy":
-            pet.mood = "unhappy"
-        else:
-            pet.mood += ",unhappy"
-        await DAO.upd(pet)
+        await Pitomec.change_mood(pet, "unhappy")
         image = await Pitomec.get_image(pet)
         await bot.send_photo(
             chat_id=pet.owner1,

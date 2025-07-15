@@ -91,8 +91,16 @@ class Pitomec(StatesGroup):
     
     @classmethod
     async def unhappy(cls, pet):
-        pet.time_to_unhappy = datetime.now() + timedelta(seconds=random.randint(1,2))
+        pet.time_to_unhappy = datetime.now() + timedelta(seconds=2)
         
+    @classmethod
+    async def change_mood(cls, pet, new_mood):
+        if pet.mood == "happy":
+            pet.mood = new_mood
+        else:
+            pet.mood += new_mood
+        await DAO.upd(pet)
+
     # @classmethod
     # async def hungry(cls, pet):
     #     pet.time_to_hungry = datetime.now() + timedelta(hours=random.randint(5,6))
