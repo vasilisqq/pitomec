@@ -10,6 +10,7 @@ from aiogram.fsm.storage.redis import RedisStorage
 import redis.asyncio as redis 
 from keyboards import to_be_happy_btn
 from pets.states import StatesP
+from aiogram.fsm.state import State
 
 pending_tasks = []
 
@@ -121,3 +122,31 @@ async def unhappy(pet):
             caption=f"{pet.name} грустит.....\n поиграй с ним",
             reply_markup=to_be_happy_btn
         )
+    
+async def set_states(state: State, pet):
+    context = dp.fsm.get_context(
+        bot=bot,
+        chat_id=pet.owner1,
+        user_id=pet.owner1
+    )
+    await context.set_state(state=state)
+    context = dp.fsm.get_context(
+        bot=bot,
+        chat_id=pet.owner2,
+        user_id=pet.owner2
+    )
+    await context.set_state(state=state)
+
+async def set_data(pet, data):
+    context = dp.fsm.get_context(
+        bot=bot,
+        chat_id=pet.owner1,
+        user_id=pet.owner1
+    )
+    await context.update_data(data)
+    context = dp.fsm.get_context(
+        bot=bot,
+        chat_id=pet.owner2,
+        user_id=pet.owner2
+    )
+    await context.update_data(data)

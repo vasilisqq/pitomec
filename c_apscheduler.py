@@ -8,6 +8,7 @@ from keyboards import to_be_happy_btn
 from pets.pitomec_in_game import PetGame
 from aiogram.fsm.context import FSMContext
 import random
+# from datetime import timezone
 
 class C_scheduler():
 
@@ -65,7 +66,6 @@ class C_scheduler():
         )
         await Pitomec.unhappy(pet)
         self.unhappy(pet, "time_to_unhappy")
-        pg = PetGame(m1, m2, pet)
         # await state.set_state(states_p.game)
         # await state.update_data(
         #     id = pet.owner1,
