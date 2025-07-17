@@ -36,8 +36,8 @@ class Pitomec(StatesGroup):
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
         self.birthday = datetime.now()
-        self.time_to_crack = self.birthday + timedelta(seconds=5)
-        self.time_to_hatch = self.birthday + timedelta(seconds=10)
+        self.time_to_crack = self.birthday + timedelta(seconds=2)
+        self.time_to_hatch = self.birthday + timedelta(seconds=4)
         del self.last_message_ids
         pet = await DAO.insert_pet(self)
         del Pitomec.all_accesses[str(self.owner1)]

@@ -9,3 +9,11 @@ to_be_happy_btn = InlineKeyboardMarkup(
         ]
     ]
 )
+
+def create_field():
+    find_pet = InlineKeyboardBuilder()
+    for i in range(9):
+        find_pet.button(text="⏺️", callback_data=f"{i}")
+    find_pet.adjust(3,3,3)
+    return find_pet.as_markup()
+
