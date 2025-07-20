@@ -1,9 +1,9 @@
 import random
 
 
-class PetGame:
-    @classmethod
-    async def create_field(cls, user_id):
-        return {'hatch':str(random.randint(0,8)),
-                'opened' : [],
-                'moove':user_id}
+async def create_field_func(user_id, m1, m2):
+    return {'hatch':random.randint(0,8),
+            'opened' : [],
+            'moove':user_id,
+            'm1':m1,
+            'm2':m2}

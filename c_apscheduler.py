@@ -5,7 +5,6 @@ from aiogram.types import BufferedInputFile
 from db.DAO import DAO
 from datetime import datetime, timedelta
 from keyboards import to_be_happy_btn
-from pets.pitomec_in_game import PetGame
 from aiogram.fsm.context import FSMContext
 import random
 # from datetime import timezone

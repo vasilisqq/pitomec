@@ -150,3 +150,17 @@ async def set_data(pet, data):
         user_id=pet.owner2
     )
     await context.update_data(data)
+
+async def clear_state(pet):
+    context = dp.fsm.get_context(
+        bot=bot,
+        chat_id=pet.owner1,
+        user_id=pet.owner1
+    )
+    await context.clear()
+    context = dp.fsm.get_context(
+        bot=bot,
+        chat_id=pet.owner2,
+        user_id=pet.owner2
+    )
+    await context.clear()
