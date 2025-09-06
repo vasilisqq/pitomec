@@ -6,7 +6,9 @@ from loader import states_p, set_states, set_data, clear_state
 from zoneinfo import ZoneInfo
 from pets.pitomec_in_game import create_field_func
 from aiogram.types import FSInputFile, InlineKeyboardMarkup
-from keyboards import create_field
+from bot.keyboards.inline import create_field
+from loader import c_scheduler
+from pets.pitomec import Pitomec
 
 router = Router()
 @router.callback_query(F.data == "game")
@@ -16,6 +18,7 @@ async def start_game(query: CallbackQuery, pet, state : FSMContext):
             text="Ты уже играешь с питомцем",
             show_alert=True
         )
+        await query.message.delete()
     elif pet.mood.find("unhappy") != -1:
         time = pet.time_to_unhappy.astimezone(ZoneInfo("UTC"))
         time = time.replace(microsecond=0)
@@ -23,6 +26,7 @@ async def start_game(query: CallbackQuery, pet, state : FSMContext):
             await query.answer(
                 "Это старое сообщение",
                 show_alert=True)
+            await query.message.delete()
         else:
             await set_states(states_p.game, pet)
             
@@ -84,6 +88,8 @@ async def answer_on_moove(query: CallbackQuery, state: FSMContext, pet):
             caption=f"Ура ты поиграл с {pet.name}\n теперь он счастлив"
         )
         await clear_state(pet)
+        await Pitomec.unhappy(pet, "unhappy")
+        c_scheduler.unhappy(pet, "time_to_unhappy")
     elif kb[data // 3][data%3].text == "X":
         await query.answer(
             text=f"Это дерево вы уже обыскали и не нашли там {pet.name}",

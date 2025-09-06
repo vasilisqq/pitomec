@@ -1,10 +1,10 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from loader import bot, states_p, dp
+from loader import bot
 from pets.pitomec import Pitomec
 from aiogram.types import BufferedInputFile
 from db.DAO import DAO
-from datetime import datetime, timedelta
-from keyboards import to_be_happy_btn
+# from datetime import datetime, timedelta
+from bot.keyboards.inline import to_be_happy_btn
 from aiogram.fsm.context import FSMContext
 import random
 # from datetime import timezone

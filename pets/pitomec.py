@@ -1,8 +1,5 @@
-from aiogram.fsm.state import State, StatesGroup
 from datetime import datetime
-import hashlib
 from PIL import Image
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime, timedelta
 import pickle
 from db.DAO import DAO
@@ -10,13 +7,15 @@ from io import BytesIO
 from dateutil.relativedelta import relativedelta
 import random
 from aiogram.types import BufferedInputFile
+from typing import Dict
+import re
 # from datetime import timezone
 
-class Pitomec(StatesGroup):
+
+
+class Pitomec:
 
     all_accesses = {}
-    name = State()
-
 
     def __init__(self, user_id:int|str, last_message) -> None:
         self.birthday = None
@@ -32,13 +31,16 @@ class Pitomec(StatesGroup):
         self.essense = "egg"
         self.mood = "whole"
     
+    @classmethod
+    async def update_dict(self, new:Dict) -> None:
+        Pitomec.all_accesses.update(new)
+        
 
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
         self.birthday = datetime.now()
         self.time_to_crack = self.birthday + timedelta(seconds=2)
         self.time_to_hatch = self.birthday + timedelta(seconds=4)
-        del self.last_message_ids
         pet = await DAO.insert_pet(self)
         del Pitomec.all_accesses[str(self.owner1)]
         del Pitomec.all_accesses[str(user_id)]
@@ -70,15 +72,6 @@ class Pitomec(StatesGroup):
         pet.essense = "hipopotam"
         pet.mood = "happy"
         await DAO.upd(pet)
-
-    @classmethod
-    async def save_accesses(cls):
-        with open("accesses.pkl", "wb") as f:
-            pickle.dump(
-                Pitomec.all_accesses,
-                f
-            )
-            f.close()
     
     @classmethod
     async def calculate_time(cls, pet):
@@ -91,16 +84,21 @@ class Pitomec(StatesGroup):
         return f"{pet.name} вылупится через: {minutes} мин"
     
     @classmethod
-    async def unhappy(cls, pet):
+    async def unhappy(cls, pet, cleared_mood:str=None):
         pet.time_to_unhappy = datetime.now() + timedelta(seconds=2)
+        await cls.change_mood(pet, "happy", cleared_mood)
+        # await DAO.upd(pet)
         
     @classmethod
-    async def change_mood(cls, pet, new_mood):
-        if pet.mood == "happy":
-            pet.mood = new_mood
+    async def change_mood(cls, pet, new_mood, cleared_mood:str=None) -> None:
+        if cleared_mood:
+            pet.mood = re.sub(fr'\b{cleared_mood}\b', f'{new_mood}', pet.mood)
         else:
-            pet.mood += new_mood
-        await DAO.upd(pet)
+            if pet.mood == "happy":
+                pet.mood = new_mood
+            else:
+                pet.mood += new_mood
+            await DAO.upd(pet)
 
     # @classmethod
     # async def hungry(cls, pet):

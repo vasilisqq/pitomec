@@ -1,13 +1,12 @@
-from aiogram import Router,F
+from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message, InputFile, BufferedInputFile
-from config import settings
+from aiogram.types import Message, BufferedInputFile
 from aiogram.fsm.context import FSMContext
 from pets.pitomec import Pitomec
 from datetime import datetime
 from aiogram.types import FSInputFile
 from text import create_ref
-from loader import c_scheduler, states_p
+from loader import states_p
 
 router = Router()
 
@@ -27,9 +26,8 @@ async def start_bot(message: Message, state: FSMContext, pet):
             if args[1] == str(message.from_user.id):
                 await message.answer("нельзя создать питомца с самим собой")
             else:
-                Pitomec.all_accesses.update(
+                await Pitomec.update_dict(
                     {str(message.from_user.id):Pitomec.all_accesses[args[1]]})
-                await Pitomec.save_accesses()
                 await state.set_state(states_p.name)
                 await message.answer("Введи имя питомца")
     else:

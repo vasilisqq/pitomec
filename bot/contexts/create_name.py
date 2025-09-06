@@ -6,6 +6,7 @@ from loader import c_scheduler, states_p
 from aiogram import Bot
 from pets.pitomec import Pitomec
 
+
 router = Router()
 
 @router.message(states_p.name)

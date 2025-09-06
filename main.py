@@ -1,10 +1,8 @@
 import asyncio
-from handlers import main_router_handler
-from contexts import main_router_contexts
+from bot.handlers import main_router_handler
+from bot.contexts import main_router_contexts
 from loader import bot, dp, import_all_exists_peets
-from middlewares.find_pit import UserMiddleware
-from loader import c_scheduler
-from pets.pitomec import Pitomec
+from bot.middlewares.find_pit import UserMiddleware
 from db.DAO import DAO
 
 async def main() -> None:
