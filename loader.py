@@ -35,17 +35,17 @@ async def import_all_exists_peets():
 #         await load_accesess()
 #     except:
 #         ...
-#     await clear_all_fsm_data(storage)
+    await clear_all_fsm_data(storage)
 
-# async def clear_all_fsm_data(storage: RedisStorage):
-#     prefix = storage.key_builder.prefix
-#     separator = storage.key_builder.separator
-#     pattern = f"{prefix}{separator}*"
-#     keys = []
-#     async for key in storage.redis.scan_iter(match=pattern):
-#         keys.append(key)
-#     if keys:
-#         await storage.redis.delete(*keys)
+async def clear_all_fsm_data(storage: RedisStorage):
+    prefix = storage.key_builder.prefix
+    separator = storage.key_builder.separator
+    pattern = f"{prefix}{separator}*"
+    keys = []
+    async for key in storage.redis.scan_iter(match=pattern):
+        keys.append(key)
+    if keys:
+        await storage.redis.delete(*keys)
 
 # async def load_accesess():
 #     with open("accesses.pkl", "rb") as f:

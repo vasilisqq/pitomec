@@ -100,10 +100,11 @@ class Pitomec:
                 pet.mood += new_mood
             await DAO.upd(pet)
 
-    # @classmethod
-    # async def hungry(cls, pet):
-    #     pet.time_to_hungry = datetime.now() + timedelta(hours=random.randint(5,6))
-
+    @classmethod
+    async def hungry(cls, pet, cleared_mood:str=None):
+        pet.time_to_hungry = datetime.now() + timedelta(seconds=2)
+        await DAO.upd(pet)
+        #await cls.change_mood(pet, "happy", cleared_mood)
 
     # @classmethod
     # async def walk(cls, pet):

@@ -4,7 +4,7 @@ from pets.pitomec import Pitomec
 from aiogram.types import BufferedInputFile
 from db.DAO import DAO
 # from datetime import datetime, timedelta
-from bot.keyboards.inline import to_be_happy_btn
+from bot.keyboards.inline import to_be_happy_btn, hungry_bttn
 from aiogram.fsm.context import FSMContext
 import random
 # from datetime import timezone
@@ -63,18 +63,10 @@ class C_scheduler():
             photo=image,
             caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
         )
-        await Pitomec.unhappy(pet)
-        self.unhappy(pet, "time_to_unhappy")
-        # await state.set_state(states_p.game)
-        # await state.update_data(
-        #     id = pet.owner1,
-        #     message1 = [m1],
-        #     message2 = [m2],
-        #     hide = random.randint(1,10)
-        # )
-        # await dp.fsm.
-        # await Pitomec.hungry(pet) 
-        # self.hungry(pet, "time_to_hungry")
+        # await Pitomec.unhappy(pet)
+        # self.unhappy(pet, "time_to_unhappy")
+        await Pitomec.hungry(pet) 
+        self.hungry(pet, "time_to_hungry")
         # await Pitomec.walk(pet)
         # self.walk(pet, "time_to_walk")
         # await DAO.upd(pet)
@@ -98,10 +90,21 @@ class C_scheduler():
         
     @scheduled_task
     async def hungry(self, pet: Pitomec, att: str):
-        print(pet.mood)
-        pet.mood = "asdad"
-        await DAO.upd(pet)
-        print(pet)         
+        await Pitomec.change_mood(pet, "hungry")
+        image = await Pitomec.get_image(pet)
+        keyboard = hungry_bttn()
+        await bot.send_photo(
+            chat_id=pet.owner1,
+            photo=image,
+            caption=f"{pet.name} голоден.....\n покорми его",
+            reply_markup=keyboard
+        )
+        await bot.send_photo(
+            chat_id=pet.owner2,
+            photo=image,
+            caption=f"{pet.name} голоден.....\n покорми его",
+            reply_markup=keyboard
+        )         
 
     @scheduled_task
     async def walk(self, pet: Pitomec, att: str):

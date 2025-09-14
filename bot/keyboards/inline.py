@@ -17,3 +17,12 @@ def create_field():
     find_pet.adjust(3,3,3)
     return find_pet.as_markup()
 
+def hungry_bttn():
+    return InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="покормить", callback_data="hungry")
+        ]
+    ]
+)    
+
