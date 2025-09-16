@@ -34,6 +34,8 @@ async def set_pit_name(message: Message, state: FSMContext, pet):
                 text=f"покормлен"
             )
             await clear_state(pet)
+            await Pitomec.hungry(pet, "hungry")
+            c_scheduler.hungry(pet, "time_to_hungry")
     else:
         await message.answer(
             "ты ввел непрвильный ингридиент, попробуй еще раз"

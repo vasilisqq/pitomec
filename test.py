@@ -1,10 +1,4 @@
-import random
 
-def choose_food() -> str:
-    food_vars = "🍇🍈🍉🍊🍋‍🟩🍋🍌🍍🥭🍎🍏🍐🍑🍒🍓🫐🧅🧄🥦🥬🥒🫑🌶🌽🥕🥔🍆🥑🥥🫒🍅🥝🥜🍗🫘🌰🫚🫛🍄‍🟫"
-    #return random.choice(food_vars)
-    return random.choices(
-        food_vars, k=2
-    )
-
-print(choose_food())
+a = "a"
+a = "".join((a, ",","v"))
+print(a)

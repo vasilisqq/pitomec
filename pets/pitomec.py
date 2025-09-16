@@ -39,8 +39,8 @@ class Pitomec:
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
         self.birthday = datetime.now()
-        self.time_to_crack = self.birthday + timedelta(seconds=2)
-        self.time_to_hatch = self.birthday + timedelta(seconds=4)
+        self.time_to_crack = self.birthday + timedelta(minutes=30)
+        self.time_to_hatch = self.birthday + timedelta(minutes=60)
         pet = await DAO.insert_pet(self)
         del Pitomec.all_accesses[str(self.owner1)]
         del Pitomec.all_accesses[str(user_id)]
@@ -52,9 +52,10 @@ class Pitomec:
     async def get_image(cls, pet):
         img_buffer = BytesIO()
         image = Image.open(f"photos/back.JPEG")
-        moods = pet.mood.split(" ")
+        moods = pet.mood.split(",")
+        print(moods)
         if len(moods) > 1:
-            im2 = Image.open(f"photos/{pet.essense}/{pet.moods[0]}.png")
+            im2 = Image.open(f"photos/{pet.essense}/{moods[-1]}.png")
         else:
             im2 = Image.open(f"photos/{pet.essense}/{pet.mood}.png")
         image.paste(im2, (0,0), mask=im2)
@@ -86,23 +87,37 @@ class Pitomec:
     @classmethod
     async def unhappy(cls, pet, cleared_mood:str=None):
         pet.time_to_unhappy = datetime.now() + timedelta(seconds=2)
-        await cls.change_mood(pet, "happy", cleared_mood)
-        # await DAO.upd(pet)
+        if cleared_mood:
+            await cls.change_mood(pet, "happy", cleared_mood)
+            return
+        await DAO.upd(pet)
         
     @classmethod
     async def change_mood(cls, pet, new_mood, cleared_mood:str=None) -> None:
         if cleared_mood:
-            pet.mood = re.sub(fr'\b{cleared_mood}\b', f'{new_mood}', pet.mood)
+            #pet.mood = re.sub(fr'\b{cleared_mood}\b', f'{new_mood}', pet.mood)
+            moods = pet.mood.split(",")
+            if len(moods) > 1:
+                if cleared_mood != moods[0]:
+                    pet.mood = re.sub(fr'\b,{cleared_mood}\b', '', pet.mood)
+                else:
+                    pet.mood = re.sub(fr'\b{cleared_mood},\b', '', pet.mood)
+            else:
+                pet.mood = "happy"
         else:
             if pet.mood == "happy":
                 pet.mood = new_mood
             else:
-                pet.mood += new_mood
-            await DAO.upd(pet)
+                pet.mood = "".join((pet.mood,",",new_mood))
+        print(pet.mood)
+        await DAO.upd(pet)
 
     @classmethod
     async def hungry(cls, pet, cleared_mood:str=None):
-        pet.time_to_hungry = datetime.now() + timedelta(seconds=2)
+        pet.time_to_hungry = datetime.now() + timedelta(seconds=5)
+        if cleared_mood:
+            await Pitomec.change_mood(pet, "happy", cleared_mood)
+            return
         await DAO.upd(pet)
         #await cls.change_mood(pet, "happy", cleared_mood)
 

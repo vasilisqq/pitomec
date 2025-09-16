@@ -42,7 +42,7 @@ class C_scheduler():
             photo=image,
             caption=f"{pet.name} скоро уже вылупится"
         )
-        self.hatch(pet, "time_to_hatch")
+        #self.hatch(pet, "time_to_hatch")
     
 
     @scheduled_task
@@ -63,10 +63,10 @@ class C_scheduler():
             photo=image,
             caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
         )
-        # await Pitomec.unhappy(pet)
-        # self.unhappy(pet, "time_to_unhappy")
-        await Pitomec.hungry(pet) 
-        self.hungry(pet, "time_to_hungry")
+        #await Pitomec.unhappy(pet)
+        #self.unhappy(pet, "time_to_unhappy")
+        #await Pitomec.hungry(pet) 
+        #self.hungry(pet, "time_to_hungry")
         # await Pitomec.walk(pet)
         # self.walk(pet, "time_to_walk")
         # await DAO.upd(pet)

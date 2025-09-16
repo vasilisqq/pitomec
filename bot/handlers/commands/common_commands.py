@@ -39,16 +39,17 @@ async def start_bot(message: Message, state: FSMContext, pet):
 @router.message(Command("me"))
 async def start_bot(message: Message, state: FSMContext, pet):
     photo = await Pitomec.get_image(pet)
-    if pet.time_to_hatch > datetime.now():
+    moods = pet.mood.split(",")
+    if len(moods) == 1:
         await message.answer_photo(
         caption= await Pitomec.calculate_time(pet),
-        photo= BufferedInputFile(photo.read(), "f.JPEG")
+        photo=await Pitomec.get_image(pet)
         )
-    else:
-        await message.answer_photo(
-        caption="Вот твой питомец",
-        photo= BufferedInputFile(photo.read(), "f.JPEG")
-        )
+        #else:
+            #await message.answer_photo(
+            #caption="Вот твой питомец",
+            #photo= photo
+            #)
         # await Pitomec.unhappy(pet)
         # c_scheduler.unhappy(pet, "time_to_unhappy")
     
