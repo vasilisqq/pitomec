@@ -1,4 +1,3 @@
-from datetime import datetime
 from PIL import Image
 from datetime import datetime, timedelta
 import pickle
@@ -10,7 +9,7 @@ from aiogram.types import BufferedInputFile
 from typing import Dict
 import re
 # from datetime import timezone
-
+from text import make_current_word
 
 
 class Pitomec:
@@ -39,8 +38,8 @@ class Pitomec:
     async def add_owner(self, user_id) -> None:
         self.owner2 = user_id
         self.birthday = datetime.now()
-        self.time_to_crack = self.birthday + timedelta(minutes=30)
-        self.time_to_hatch = self.birthday + timedelta(minutes=60)
+        self.time_to_crack = self.birthday + timedelta(seconds=2)
+        self.time_to_hatch = self.birthday + timedelta(seconds=4)
         pet = await DAO.insert_pet(self)
         del Pitomec.all_accesses[str(self.owner1)]
         del Pitomec.all_accesses[str(user_id)]
@@ -76,13 +75,20 @@ class Pitomec:
     
     @classmethod
     async def calculate_time(cls, pet):
-        delta = pet.time_to_hatch - datetime.now()
-        total_seconds = abs(round(delta.total_seconds()))
-        hours = total_seconds // 3600
-        minutes = (total_seconds % 3600) // 60
-        if hours > 0:
-            return f"{pet.name} вылупится через: {hours} ч {minutes} мин" 
-        return f"{pet.name} вылупится через: {minutes} мин"
+        if not pet.time_to_unhappy:
+            delta = datetime.now() - pet.time_to_hatch
+            total_seconds = abs(round(delta.total_seconds()))
+            hours = total_seconds // 3600
+            minutes = (total_seconds % 3600) // 60
+            if hours > 0:
+                return f"{pet.name} вылупится через: {hours} ч {minutes} мин" 
+            return f"{pet.name} вылупится через: {minutes} мин"
+        else:
+            delta: timedelta = pet.time_to_hatch - datetime.now()
+            if delta.days > 0:
+                return f"{pet.name} уже: {delta.days} {await make_current_word(delta.days)}" 
+            return f"{pet.name} родился только сегодня, он еще совсем мал"
+        
     
     @classmethod
     async def unhappy(cls, pet, cleared_mood:str=None):

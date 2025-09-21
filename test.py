@@ -1,4 +1,4 @@
 
 a = "a"
-a = "".join((a, ",","v"))
+a = a.split(',')
 print(a)

@@ -11,7 +11,7 @@ from loader import c_scheduler
 from pets.pitomec import Pitomec
 
 router = Router()
-@router.callback_query(F.data == "game")
+@router.callback_query(F.data == "unhappy")
 async def start_game(query: CallbackQuery, pet, state : FSMContext):
     if await state.get_state() == states_p.game:
         await query.answer(
@@ -77,16 +77,17 @@ async def answer_on_moove(query: CallbackQuery, state: FSMContext, pet):
             chat_id=pet.owner2,
             message_id=st["m2"]
         )
-        await query.bot.send_photo(
+        await query.bot.send_message(
             chat_id=pet.owner1,
-            photo=FSInputFile("photos/hipopotam/happy.png"),
-            caption=f"Ура ты поиграл с {pet.name}\n теперь он счастлив"
+            #photo=FSInputFile("photos/hipopotam/happy.png"),
+            text=f"Ура ты поиграл с {pet.name}\n теперь он счастлив"
         )
-        await query.bot.send_photo(
+        await query.bot.send_message(
             chat_id=pet.owner2,
-            photo=FSInputFile("photos/hipopotam/happy.png"),
-            caption=f"Ура ты поиграл с {pet.name}\n теперь он счастлив"
+            #photo=FSInputFile("photos/hipopotam/happy.png"),
+            text=f"Ура ты поиграл с {pet.name}\n теперь он счастлив"
         )
+        
         await clear_state(pet)
         await Pitomec.unhappy(pet, "unhappy")
         c_scheduler.unhappy(pet, "time_to_unhappy")

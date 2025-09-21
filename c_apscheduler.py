@@ -31,42 +31,38 @@ class C_scheduler():
     @scheduled_task
     async def crack(self, pet, att: str):
         await Pitomec.crack(pet)
-        image = await Pitomec.get_image(pet)
-        await bot.send_photo(
+        await bot.send_message(
             chat_id=pet.owner1,
-            photo=image,
-            caption=f"{pet.name} скоро уже вылупится"
+            text=f"{pet.name} кажется начал трещать..."
         )
-        await bot.send_photo(
+        await bot.send_message(
             chat_id=pet.owner2,
-            photo=image,
-            caption=f"{pet.name} скоро уже вылупится"
+            text=f"{pet.name} кажется начал трещать..."
         )
-        #self.hatch(pet, "time_to_hatch")
+        self.hatch(pet, "time_to_hatch")
     
 
     @scheduled_task
     async def hatch(self, 
                     pet: Pitomec, 
-                    att: str, 
-                    # state: FSMContext
+                    att: str
                     ):
         await Pitomec.hatch(pet)
         image = await Pitomec.get_image(pet)
-        m1 = await bot.send_photo(
+        await bot.send_photo(
             chat_id=pet.owner1,
             photo=image,
             caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
         )
-        m2 = await bot.send_photo(
+        await bot.send_photo(
             chat_id=pet.owner2,
             photo=image,
             caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
         )
-        #await Pitomec.unhappy(pet)
-        #self.unhappy(pet, "time_to_unhappy")
-        #await Pitomec.hungry(pet) 
-        #self.hungry(pet, "time_to_hungry")
+        await Pitomec.unhappy(pet)
+        self.unhappy(pet, "time_to_unhappy")
+        await Pitomec.hungry(pet) 
+        self.hungry(pet, "time_to_hungry")
         # await Pitomec.walk(pet)
         # self.walk(pet, "time_to_walk")
         # await DAO.upd(pet)
@@ -75,17 +71,19 @@ class C_scheduler():
     async def unhappy(self, pet: Pitomec, att: str):
         await Pitomec.change_mood(pet, "unhappy")
         image = await Pitomec.get_image(pet)
-        await bot.send_photo(
+        #await bot.send_photo(
+        await bot.send_message(
             chat_id=pet.owner1,
-            photo=image,
-            caption=f"{pet.name} грустит.....\n поиграй с ним",
-            reply_markup=to_be_happy_btn
+            #photo=image,
+            text=f"{pet.name} грустит.....\n поиграй с ним",
+            #reply_markup=to_be_happy_btn
         )
-        await bot.send_photo(
+        #await bot.send_photo(
+        await bot.send_message(
             chat_id=pet.owner2,
-            photo=image,
-            caption=f"{pet.name} грустит.....\n поиграй с ним",
-            reply_markup=to_be_happy_btn
+            #photo=image,
+            text=f"{pet.name} грустит.....\n поиграй с ним",
+            #reply_markup=to_be_happy_btn
         )
         
     @scheduled_task
@@ -93,17 +91,17 @@ class C_scheduler():
         await Pitomec.change_mood(pet, "hungry")
         image = await Pitomec.get_image(pet)
         keyboard = hungry_bttn()
-        await bot.send_photo(
+        await bot.send_message(
             chat_id=pet.owner1,
-            photo=image,
-            caption=f"{pet.name} голоден.....\n покорми его",
-            reply_markup=keyboard
+            #photo=image,
+            text=f"{pet.name} голоден.....\n покорми его",
+            #reply_markup=keyboard
         )
-        await bot.send_photo(
+        await bot.send_message(
             chat_id=pet.owner2,
-            photo=image,
-            caption=f"{pet.name} голоден.....\n покорми его",
-            reply_markup=keyboard
+            #photo=image,
+            text=f"{pet.name} голоден.....\n покорми его",
+            #reply_markup=keyboard
         )         
 
     @scheduled_task

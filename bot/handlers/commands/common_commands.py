@@ -7,6 +7,7 @@ from datetime import datetime
 from aiogram.types import FSInputFile
 from text import create_ref
 from loader import states_p
+from bot.keyboards.inline import create_moods_btns
 
 router = Router()
 
@@ -39,11 +40,17 @@ async def start_bot(message: Message, state: FSMContext, pet):
 @router.message(Command("me"))
 async def start_bot(message: Message, state: FSMContext, pet):
     photo = await Pitomec.get_image(pet)
-    moods = pet.mood.split(",")
-    if len(moods) == 1:
+    if pet.time_to_hatch > datetime.now():
         await message.answer_photo(
         caption= await Pitomec.calculate_time(pet),
-        photo=await Pitomec.get_image(pet)
+        photo=photo
+        )
+    else:
+        moods = pet.mood.split(",")
+        await message.answer_photo(
+        caption = await Pitomec.calculate_time(pet),
+        photo=photo,
+        reply_markup= await create_moods_btns(moods) if moods[0] != "happy" else None
         )
         #else:
             #await message.answer_photo(

@@ -30,12 +30,12 @@ async def set_pit_name(message: Message, state: FSMContext):
     image = await Pitomec.get_image(pet)
     await message.answer_photo(
         photo=image,
-        caption=f"теперь нужно подождать, когда {pet.name} вылупится"
+        caption=f"теперь нужно подождать, когда {pet.name} вылупится.\n Чтобы отслеживать состояние своего питомца, используй команду /me"
     )
     await message.bot.send_photo(
         chat_id=pet.owner1,
         photo=image,
-        caption=f"теперь нужно подождать, когда {pet.name} вылупится"
+        caption=f"теперь нужно подождать, когда {pet.name} вылупится.\n Чтобы отслеживать состояние своего питомца, используй команду /me"
     )
-    #c_scheduler.crack(pet, "time_to_crack")
+    c_scheduler.crack(pet, "time_to_crack")
 
