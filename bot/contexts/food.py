@@ -12,6 +12,7 @@ router = Router()
 async def set_pit_name(message: Message, state: FSMContext, pet):
 
     st = await state.get_data()
+    print(st)
     if st[str(message.from_user.id)][1]:
         await message.answer(
             text="Ты уже отправил свой ингридиент, ждем второго"
@@ -24,7 +25,7 @@ async def set_pit_name(message: Message, state: FSMContext, pet):
         await set_data(
                 pet, 
                 st)
-        if st[str(pet.owner2) if pet.owner1 == message.from_user.id else str(pet.owner1)][1]:
+        if st[str(pet.owner2) if pet.owner1 == str(message.from_user.id) else str(pet.owner1)][1]:
             await message.bot.send_message(
                 chat_id=pet.owner1,
                 text=f"покормлен"

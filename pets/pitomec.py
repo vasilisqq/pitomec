@@ -13,39 +13,17 @@ from text import make_current_word
 
 
 class Pitomec:
-
-    all_accesses = {}
-
-    def __init__(self, user_id:int|str, last_message) -> None:
-        self.birthday = None
-        self.owner1 = user_id
-        Pitomec.all_accesses.update({str(user_id):self})
-        self.owner2 = None
-        self.time_to_crack = None
-        self.time_to_hatch = None
-        self.last_message_ids = [
-            last_message,
-            last_message-1,
-            last_message-2]
-        self.essense = "egg"
-        self.mood = "whole"
-    
     @classmethod
-    async def update_dict(self, new:Dict) -> None:
-        Pitomec.all_accesses.update(new)
-        
-
-    async def add_owner(self, user_id) -> None:
-        self.owner2 = user_id
-        self.birthday = datetime.now()
-        self.time_to_crack = self.birthday + timedelta(seconds=2)
-        self.time_to_hatch = self.birthday + timedelta(seconds=4)
-        pet = await DAO.insert_pet(self)
-        del Pitomec.all_accesses[str(self.owner1)]
-        del Pitomec.all_accesses[str(user_id)]
-        del self
-        return pet
-
+    async def create_pet(cls,  owner1,  owner2, name) -> None:
+        birthday = datetime.now()
+        return await DAO.insert_pet(
+            owner1,
+            owner2,
+            name,
+            birthday,
+            birthday + timedelta(seconds=2),
+            birthday + timedelta(seconds=4)
+        )  
 
     @classmethod
     async def get_image(cls, pet):
@@ -127,8 +105,13 @@ class Pitomec:
         await DAO.upd(pet)
         #await cls.change_mood(pet, "happy", cleared_mood)
 
-    # @classmethod
-    # async def walk(cls, pet):
-    #     pet.time_to_walk = datetime.now() + timedelta(hours=random.randint(3,5))
+    @classmethod
+    async def walk(cls, pet, cleared_mood:str=None):
+        pet.time_to_walk = datetime.now() + timedelta(seconds=8)
+        if cleared_mood:
+            await Pitomec.change_mood(pet, "happy", cleared_mood)
+            return
+        await DAO.upd(pet)
+
 
         

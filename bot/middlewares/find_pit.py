@@ -20,5 +20,5 @@ class UserMiddleware(BaseMiddleware):
         )
         if not current_event:
             return 
-        data["pet"] = await DAO.find_pet(current_event.from_user.id)
+        data["pet"] = await DAO.find_pet(str(current_event.from_user.id))
         return await handler(event, data)

@@ -4,7 +4,7 @@ from pets.pitomec import Pitomec
 from aiogram.types import BufferedInputFile
 from db.DAO import DAO
 # from datetime import datetime, timedelta
-from bot.keyboards.inline import to_be_happy_btn, hungry_bttn
+from bot.keyboards.inline import to_be_happy_btn, hungry_bttn, walk_bttn
 from aiogram.fsm.context import FSMContext
 import random
 # from datetime import timezone
@@ -33,11 +33,15 @@ class C_scheduler():
         await Pitomec.crack(pet)
         await bot.send_message(
             chat_id=pet.owner1,
-            text=f"{pet.name} кажется начал трещать..."
+            text=f"""Яйцо дало первые трещинки!🥚🥚🥚
+Еще немного терпения — {pet.name} уже готов вылупиться.
+Следи за обновлениями или проверь через /me"""
         )
         await bot.send_message(
             chat_id=pet.owner2,
-            text=f"{pet.name} кажется начал трещать..."
+            text=f"""Яйцо дало первые трещинки!🥚🥚🥚
+Еще немного терпения — {pet.name} уже готов вылупиться.
+Следи за обновлениями или проверь через /me"""
         )
         self.hatch(pet, "time_to_hatch")
     
@@ -52,20 +56,24 @@ class C_scheduler():
         await bot.send_photo(
             chat_id=pet.owner1,
             photo=image,
-            caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
+            caption=f"""{pet.name} вылупился!🎉🎉🎉
+Поздравляем! Теперь ваш новый друг рядом.
+Он может загрустить без внимания"""
         )
         await bot.send_photo(
             chat_id=pet.owner2,
             photo=image,
-            caption=f"{pet.name} вылупился\n через какое-то время он может заскучать, проголодаться или захотеть гулять, следи за своим питомцем вместе с партнером, все задания нужно выполнять вдвоем, а не по отдельности!!"
+            caption=f"""{pet.name} вылупился!🎉🎉🎉
+Поздравляем! Теперь ваш новый друг рядом.
+Он может загрустить без внимания"""
         )
         await Pitomec.unhappy(pet)
         self.unhappy(pet, "time_to_unhappy")
         await Pitomec.hungry(pet) 
         self.hungry(pet, "time_to_hungry")
-        # await Pitomec.walk(pet)
-        # self.walk(pet, "time_to_walk")
-        # await DAO.upd(pet)
+        await Pitomec.walk(pet)
+        self.walk(pet, "time_to_walk")
+        await DAO.upd(pet)
 
     @scheduled_task
     async def unhappy(self, pet: Pitomec, att: str):
@@ -76,34 +84,42 @@ class C_scheduler():
             chat_id=pet.owner1,
             #photo=image,
             text=f"{pet.name} грустит.....\n поиграй с ним",
-            #reply_markup=to_be_happy_btn
+            reply_markup=to_be_happy_btn
         )
         #await bot.send_photo(
         await bot.send_message(
             chat_id=pet.owner2,
             #photo=image,
             text=f"{pet.name} грустит.....\n поиграй с ним",
-            #reply_markup=to_be_happy_btn
+            reply_markup=to_be_happy_btn
         )
         
     @scheduled_task
     async def hungry(self, pet: Pitomec, att: str):
         await Pitomec.change_mood(pet, "hungry")
-        image = await Pitomec.get_image(pet)
         keyboard = hungry_bttn()
         await bot.send_message(
             chat_id=pet.owner1,
-            #photo=image,
             text=f"{pet.name} голоден.....\n покорми его",
-            #reply_markup=keyboard
+            reply_markup=keyboard
         )
         await bot.send_message(
             chat_id=pet.owner2,
-            #photo=image,
             text=f"{pet.name} голоден.....\n покорми его",
-            #reply_markup=keyboard
+            reply_markup=keyboard
         )         
 
     @scheduled_task
     async def walk(self, pet: Pitomec, att: str):
-        ... 
+        await Pitomec.change_mood(pet, "walk")
+        keyboard = walk_bttn()
+        await bot.send_message(
+            chat_id=pet.owner1,
+            text=f"{pet.name} хочет погулять.....\n выведи его на улицу",
+            reply_markup=keyboard
+        )
+        await bot.send_message(
+            chat_id=pet.owner2,
+            text=f"{pet.name} хочет погулять.....\n выведи его на улицу",
+            reply_markup=keyboard
+        ) 

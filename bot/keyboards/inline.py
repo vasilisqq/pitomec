@@ -26,11 +26,21 @@ def hungry_bttn():
     ]
 )
 
+def walk_bttn():
+    return InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="погулять", callback_data="walk")
+        ]
+    ]
+)
+
 async def create_moods_btns(moods: list):
     kb = InlineKeyboardBuilder()
     translated = {
         "unhappy": "поиграть",
-        "hungry": "покормить"
+        "hungry": "покормить",
+        "walk": "погулять"
     }
     for mood in moods:
         kb.button(text=translated[mood], callback_data=mood)

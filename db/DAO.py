@@ -20,15 +20,15 @@ class DAO:
         
 
     @classmethod
-    async def insert_pet(cls, pet):
+    async def insert_pet(cls, owner1, owner2, name, birthday,time_to_crack,time_to_hatch):
         async with async_session_maker() as session:
             query = insert(PetsModel).values(
-                owner1 = pet.owner1,
-                owner2 = pet.owner2,
-                name = pet.name,
-                birthday = pet.birthday,
-                time_to_crack = pet.time_to_crack,
-                time_to_hatch = pet.time_to_hatch
+                owner1 = owner1,
+                owner2 = owner2,
+                name = name,
+                birthday = birthday,
+                time_to_crack = time_to_crack,
+                time_to_hatch = time_to_hatch
             ).returning(PetsModel)
             pet = await session.execute(query)
             await session.commit()

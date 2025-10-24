@@ -8,6 +8,7 @@ from aiogram.types import FSInputFile
 from text import create_ref
 from loader import states_p
 from bot.keyboards.inline import create_moods_btns
+from pets.states import StatesP
 
 router = Router()
 
@@ -22,14 +23,12 @@ async def start_bot(message: Message, state: FSMContext, pet):
             )
             l_m = await message.answer(await create_ref(message.from_user.id),
                             parse_mode="HTML")
-            Pitomec(message.from_user.id, l_m.message_id)
         if len(args) == 2:
             if args[1] == str(message.from_user.id):
                 await message.answer("нельзя создать питомца с самим собой")
             else:
-                await Pitomec.update_dict(
-                    {str(message.from_user.id):Pitomec.all_accesses[args[1]]})
                 await state.set_state(states_p.name)
+                await state.set_data({"first":args[1]})
                 await message.answer("Введи имя питомца")
     else:
         await message.answer(
@@ -60,6 +59,7 @@ async def start_bot(message: Message, state: FSMContext, pet):
         # await Pitomec.unhappy(pet)
         # c_scheduler.unhappy(pet, "time_to_unhappy")
     
+
 # @router.message(Command("test"))
 # async def start_bot(message: Message, state: FSMContext, pet):
 #     c_scheduler.hungry(pet, "time_to_hungry")

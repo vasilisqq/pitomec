@@ -11,7 +11,7 @@ from loader import c_scheduler
 from pets.pitomec import Pitomec
 
 router = Router()
-@router.callback_query(F.data == "unhappy")
+@router.callback_query(F.data == "game")
 async def start_game(query: CallbackQuery, pet, state : FSMContext):
     if await state.get_state() == states_p.game:
         await query.answer(
@@ -47,7 +47,7 @@ async def start_game(query: CallbackQuery, pet, state : FSMContext):
             await set_data(
                 pet, 
                 await create_field_func(
-                    query.from_user.id,
+                    str(query.from_user.id),
                     m1.message_id,
                     m2.message_id))
     else:
@@ -59,11 +59,10 @@ async def start_game(query: CallbackQuery, pet, state : FSMContext):
 
 @router.callback_query(F.data.in_([str(i) for i in range(9)]))
 async def answer_on_moove(query: CallbackQuery, state: FSMContext, pet):
-    # print(query.data)
     data = int(query.data)
     st = await state.get_data()
     kb = query.message.reply_markup.inline_keyboard
-    if st["moove"] != query.from_user.id:
+    if st["moove"] != str(query.from_user.id):
         await query.answer(
             text="Сейчас не твоя попытка",
             show_alert=True
@@ -99,7 +98,7 @@ async def answer_on_moove(query: CallbackQuery, state: FSMContext, pet):
     else:
         kb[data // 3][data%3].text = "X"
         st["opened"].append(data)
-        st["moove"] = pet.owner2 if pet.owner1 == query.from_user.id else pet.owner1
+        st["moove"] = pet.owner2 if pet.owner1 == str(query.from_user.id) else pet.owner1
         await set_data(pet,
             st
         )

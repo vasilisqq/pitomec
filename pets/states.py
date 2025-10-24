@@ -4,4 +4,6 @@ class StatesP(StatesGroup):
     name = State()
     game = State()
     feed = State()
+    waiting_for_partner = State()
+
 
