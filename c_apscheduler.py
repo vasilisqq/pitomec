@@ -18,18 +18,18 @@ class C_scheduler():
         self.scheduler.start()
 
     def scheduled_task(func):
-        def wrapper(self, pit, att):
+        def wrapper(self, pit, **kwargs):
             self.scheduler.add_job(
                 func,
                 trigger="date",
-                run_date=getattr(pit, att),
-                kwargs={"pet":pit, "self":self, "att":att}
+                run_date=getattr(pit, kwargs.get('att')),
+                kwargs={"pet":pit, "self":self, "att":kwargs.get('att')}
             )
         return wrapper
     
 
     @scheduled_task
-    async def crack(self, pet, att: str):
+    async def crack(self, pet, **kwargs):
         await Pitomec.crack(pet)
         await bot.send_message(
             chat_id=pet.owner1,
@@ -43,13 +43,13 @@ class C_scheduler():
 Еще немного терпения — {pet.name} уже готов вылупиться.
 Следи за обновлениями или проверь через /me"""
         )
-        self.hatch(pet, "time_to_hatch")
+        self.hatch(pet, att="time_to_hatch")
     
 
     @scheduled_task
     async def hatch(self, 
                     pet: Pitomec, 
-                    att: str
+                    **kwargs
                     ):
         await Pitomec.hatch(pet)
         image = await Pitomec.get_image(pet)
@@ -68,15 +68,15 @@ class C_scheduler():
 Он может загрустить без внимания"""
         )
         await Pitomec.unhappy(pet)
-        self.unhappy(pet, "time_to_unhappy")
+        self.unhappy(pet, att="time_to_unhappy")
         await Pitomec.hungry(pet) 
-        self.hungry(pet, "time_to_hungry")
+        self.hungry(pet, att="time_to_hungry")
         await Pitomec.walk(pet)
-        self.walk(pet, "time_to_walk")
+        self.walk(pet, att="time_to_walk")
         await DAO.upd(pet)
 
     @scheduled_task
-    async def unhappy(self, pet: Pitomec, att: str):
+    async def unhappy(self, pet: Pitomec, **kwargs):
         await Pitomec.change_mood(pet, "unhappy")
         image = await Pitomec.get_image(pet)
         #await bot.send_photo(
@@ -95,7 +95,7 @@ class C_scheduler():
         )
         
     @scheduled_task
-    async def hungry(self, pet: Pitomec, att: str):
+    async def hungry(self, pet: Pitomec, **kwargs):
         await Pitomec.change_mood(pet, "hungry")
         keyboard = hungry_bttn()
         await bot.send_message(
@@ -110,7 +110,7 @@ class C_scheduler():
         )         
 
     @scheduled_task
-    async def walk(self, pet: Pitomec, att: str):
+    async def walk(self, pet: Pitomec, **kwargs):
         await Pitomec.change_mood(pet, "walk")
         keyboard = walk_bttn()
         await bot.send_message(

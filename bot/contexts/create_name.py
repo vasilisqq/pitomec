@@ -32,5 +32,5 @@ async def set_pit_name(message: Message, state: FSMContext):
 Теперь остается ждать, когда он появится на свет!
 Проверь статус через команду /me"""
         )
-    c_scheduler.crack(pet, "time_to_crack")
+    c_scheduler.crack(pet, att="time_to_crack")
 
