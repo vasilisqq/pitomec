@@ -2,9 +2,10 @@ from aiogram import Router
 from pets.pitomec import Pitomec
 from aiogram.types import Message, BufferedInputFile
 from aiogram.fsm.context import FSMContext
-from loader import c_scheduler, states_p, clear_state, set_data
+from loader import states_p, dp
 from aiogram import Bot
 from pets.pitomec import Pitomec
+from c_apscheduler import scheduler
 
 router = Router()
 
@@ -22,9 +23,10 @@ async def set_pit_name(message: Message, state: FSMContext, pet):
             text="ты правильно прислал свой фрукт"
         )
         st[str(message.from_user.id)][1] = True
-        await set_data(
+        await dp.set_data(
                 pet, 
-                st)
+                st,
+                message.bot)
         if st[str(pet.owner2) if pet.owner1 == str(message.from_user.id) else str(pet.owner1)][1]:
             await message.bot.send_message(
                 chat_id=pet.owner1,
@@ -34,9 +36,9 @@ async def set_pit_name(message: Message, state: FSMContext, pet):
                 chat_id=pet.owner2,
                 text=f"покормлен"
             )
-            await clear_state(pet)
+            await dp.dpclear_state(pet, message.bot)
             await Pitomec.hungry(pet, "hungry")
-            c_scheduler.hungry(pet, "time_to_hungry")
+            scheduler.hungry(pet, "time_to_hungry")
     else:
         await message.answer(
             "ты ввел непрвильный ингридиент, попробуй еще раз"

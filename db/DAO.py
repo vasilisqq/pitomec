@@ -1,7 +1,7 @@
 from db.database import async_session_maker
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy import update, select, or_, case, func, delete
-from db.petModel import PetsModel
+from db.models.petModel import PetsModel
 
 class DAO:
 

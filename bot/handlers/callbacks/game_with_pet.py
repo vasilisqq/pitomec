@@ -2,13 +2,14 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from datetime import timezone
 from aiogram.fsm.context import FSMContext
-from loader import states_p, set_states, set_data, clear_state
+from loader import states_p
+from loader import dp
 from zoneinfo import ZoneInfo
 from pets.pitomec_in_game import create_field_func
 from aiogram.types import FSInputFile, InlineKeyboardMarkup
 from bot.keyboards.inline import create_field
-from loader import c_scheduler
 from pets.pitomec import Pitomec
+from c_apscheduler import scheduler
 
 router = Router()
 @router.callback_query(F.data == "game")
@@ -28,7 +29,7 @@ async def start_game(query: CallbackQuery, pet, state : FSMContext):
                 show_alert=True)
             await query.message.delete()
         else:
-            await set_states(states_p.game, pet)
+            await dp.set_states(states_p.game, pet, query.bot)
             
             photo=FSInputFile("photos/hided.png")
             kb = create_field()
@@ -44,12 +45,13 @@ async def start_game(query: CallbackQuery, pet, state : FSMContext):
                 caption=f"{pet.name} спрятался за одним из этих деревьев, выбирайте по очереди, пока не найдете своего питомца",
                 reply_markup=kb
             )
-            await set_data(
+            await dp.set_data(
                 pet, 
                 await create_field_func(
                     str(query.from_user.id),
                     m1.message_id,
-                    m2.message_id))
+                    m2.message_id),
+                    query.bot)
     else:
         await query.answer(f"{pet.name} больше не грустит")
     await query.bot.delete_message(
@@ -87,9 +89,9 @@ async def answer_on_moove(query: CallbackQuery, state: FSMContext, pet):
             text=f"Ура ты поиграл с {pet.name}\n теперь он счастлив"
         )
         
-        await clear_state(pet)
+        await dp.clear_state(pet, query.bot)
         await Pitomec.unhappy(pet, "unhappy")
-        c_scheduler.unhappy(pet, "time_to_unhappy")
+        scheduler.unhappy(pet, "time_to_unhappy")
     elif kb[data // 3][data%3].text == "X":
         await query.answer(
             text=f"Это дерево вы уже обыскали и не нашли там {pet.name}",
@@ -99,8 +101,8 @@ async def answer_on_moove(query: CallbackQuery, state: FSMContext, pet):
         kb[data // 3][data%3].text = "X"
         st["opened"].append(data)
         st["moove"] = pet.owner2 if pet.owner1 == str(query.from_user.id) else pet.owner1
-        await set_data(pet,
-            st
+        await dp.set_data(pet,
+            st, query.bot
         )
         await query.bot.edit_message_reply_markup(
             chat_id=pet.owner1,

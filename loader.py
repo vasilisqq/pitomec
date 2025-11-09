@@ -1,51 +1,45 @@
-from aiogram import Dispatcher, Bot
+from aiogram import Bot
 from config import settings
-import pickle
-from datetime import datetime
-from pets.pitomec import Pitomec
-from db.DAO import DAO
-from aiogram.fsm.storage.redis import RedisStorage
-import redis.asyncio as redis 
-from bot.keyboards.inline import to_be_happy_btn
+import redis.asyncio as redis
 from pets.states import StatesP
-from aiogram.fsm.state import State
+from dispatcher import DispatcherExpanded
+from redis_exp import RedisStorageExpanded
 
-pending_tasks = []
 
-storage = RedisStorage(
-    redis=redis.Redis(
-        host='localhost',
+storage = RedisStorageExpanded(
+        redis=redis.Redis(
+        host="localhost",
         port=6379,
         db=0,
         password=settings.REDIS_PASSWORD.get_secret_value(),
-        decode_responses=True
+        decode_responses=True,
+        )
     )
-)
+dp = DispatcherExpanded(storage=storage)
 states_p = StatesP()
-dp = Dispatcher(storage=storage)
 bot = Bot(settings.BOT_TOKEN.get_secret_value())
 
-from c_apscheduler import C_scheduler
-c_scheduler = C_scheduler()
 
-async def import_all_exists_peets():
-    c_scheduler.start_sc()
-#     await get_all()
-#     try:
-#         await load_accesess()
-#     except:
-#         ...
-    await clear_all_fsm_data(storage)
+    
+    
 
-async def clear_all_fsm_data(storage: RedisStorage):
-    prefix = storage.key_builder.prefix
-    separator = storage.key_builder.separator
-    pattern = f"{prefix}{separator}*"
-    keys = []
-    async for key in storage.redis.scan_iter(match=pattern):
-        keys.append(key)
-    if keys:
-        await storage.redis.delete(*keys)
+# pending_tasks = []
+
+
+
+
+
+
+# async def import_all_exists_peets():
+#     await c_scheduler.start_sc()
+#     #     await get_all()
+#     #     try:
+#     #         await load_accesess()
+#     #     except:
+#     #         ...
+#     await clear_all_fsm_data(storage)
+
+
 
 # async def load_accesess():
 #     with open("accesses.pkl", "rb") as f:
@@ -69,7 +63,7 @@ async def clear_all_fsm_data(storage: RedisStorage):
 #                 await already_cracked(pet)
 #         else:
 #             c_scheduler.crack(pet, "time_to_crack")
-       
+
 
 # async def already_cracked(pet):
 #     pet.mood = "nock"
@@ -102,7 +96,7 @@ async def clear_all_fsm_data(storage: RedisStorage):
 #             photo=image,
 #             caption=f"{pet.name} вылупился"
 #         )
-    
+
 # async def unhappy(pet):
 #     if "unhappy" not in pet.mood:
 #         pet.mood+=",unhappy"
@@ -121,47 +115,6 @@ async def clear_all_fsm_data(storage: RedisStorage):
 #             caption=f"{pet.name} грустит.....\n поиграй с ним",
 #             reply_markup=to_be_happy_btn
 #         )
-    
-async def set_states(state: State, pet):
-    context = dp.fsm.get_context(
-        bot=bot,
-        chat_id=pet.owner1,
-        user_id=pet.owner1
-    )
-    await context.set_state(state=state)
-    context = dp.fsm.get_context(
-        bot=bot,
-        chat_id=pet.owner2,
-        user_id=pet.owner2
-    )
-    await context.set_state(state=state)
-
-async def set_data(pet, data):
-    context = dp.fsm.get_context(
-        bot=bot,
-        chat_id=pet.owner1,
-        user_id=pet.owner1
-    )
-    await context.update_data(data)
-    context = dp.fsm.get_context(
-        bot=bot,
-        chat_id=pet.owner2,
-        user_id=pet.owner2
-    )
-    await context.update_data(data)
 
 
 
-async def clear_state(pet):
-    context = dp.fsm.get_context(
-        bot=bot,
-        chat_id=pet.owner1,
-        user_id=pet.owner1
-    )
-    await context.clear()
-    context = dp.fsm.get_context(
-        bot=bot,
-        chat_id=pet.owner2,
-        user_id=pet.owner2
-    )
-    await context.clear()

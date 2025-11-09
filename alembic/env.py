@@ -5,7 +5,8 @@ from sqlalchemy import pool
 from db.database import Base, DATABASE_URL
 from alembic import context
 
-from db.petModel import PetsModel
+from db.models.petModel import PetsModel
+from db.models.jobstorage import JobStorage
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

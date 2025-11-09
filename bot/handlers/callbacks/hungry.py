@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 from loader import states_p
 from zoneinfo import ZoneInfo
-from loader import states_p, set_states, set_data, clear_state
+from loader import states_p, dp
 from pets.pitomec_in_game import choose_ingridients
 
 router = Router()
@@ -23,7 +23,7 @@ async def start_feed(query: CallbackQuery, pet, state : FSMContext):
                 "Это старое сообщение",
                 show_alert=True)
         else:
-            await set_states(states_p.feed, pet)
+            await dp.set_states(states_p.feed, pet, query.bot)
             ing = await choose_ingridients(pet)
             await query.bot.send_message(
                 chat_id=pet.owner1,
@@ -33,9 +33,9 @@ async def start_feed(query: CallbackQuery, pet, state : FSMContext):
                 chat_id=pet.owner2,
                 text=f"пришли {ing[pet.owner2][0]} чтобы покормить {pet.name}"
             )
-            await set_data(
+            await dp.set_data(
                 pet, 
-                ing)
+                ing,query.bot)
     await query.message.delete()
 
 

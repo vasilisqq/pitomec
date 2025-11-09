@@ -1,0 +1,14 @@
+[project]
+name = "pitomec"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "bandit>=1.8.6",
+    "black>=25.9.0",
+    "celery>=5.5.3",
+    "loguru>=0.7.3",
+    "mypy>=1.18.2",
+    "pylint>=4.0.2",
+]

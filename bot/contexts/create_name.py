@@ -2,7 +2,8 @@ from aiogram import Router
 from pets.pitomec import Pitomec
 from aiogram.types import Message, BufferedInputFile
 from aiogram.fsm.context import FSMContext
-from loader import c_scheduler, states_p
+from loader import states_p
+from c_apscheduler import scheduler
 from aiogram import Bot
 from pets.pitomec import Pitomec
 
@@ -32,5 +33,5 @@ async def set_pit_name(message: Message, state: FSMContext):
 Теперь остается ждать, когда он появится на свет!
 Проверь статус через команду /me"""
         )
-    c_scheduler.crack(pet, att="time_to_crack")
+    scheduler.crack(pet, att="time_to_crack")
 

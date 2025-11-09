@@ -1,0 +1,6 @@
+2025-11-04 13:37:43 | DEBUG | c_apscheduler:__init__:43 - Jobstore: Redis, executors: AsyncIO, timezone: Europe/Moscow
+2025-11-04 13:37:43 | DEBUG | c_apscheduler:<module>:279 - Создан глобальный экземпляр планировщика
+2025-11-04 13:48:32 | DEBUG | c_apscheduler:__init__:43 - Jobstore: Redis, executors: AsyncIO, timezone: Europe/Moscow
+2025-11-04 13:48:32 | DEBUG | c_apscheduler:ini_scheduler:282 - Создан глобальный экземпляр планировщика
+2025-11-04 13:53:33 | DEBUG | c_apscheduler:__init__:43 - Jobstore: Redis, executors: AsyncIO, timezone: Europe/Moscow
+2025-11-04 13:53:33 | DEBUG | c_apscheduler:ini_scheduler:282 - Создан глобальный экземпляр планировщика
